@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.kickstarter.R;
 import com.kickstarter.libs.ActivityRequestCodes;
 import com.kickstarter.libs.BaseActivity;
+import com.kickstarter.libs.ConvertedKoalaContext;
 import com.kickstarter.libs.RecyclerViewPaginator;
 import com.kickstarter.libs.SwipeRefresher;
 import com.kickstarter.libs.qualifiers.RequiresActivityViewModel;
@@ -41,6 +43,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
+import timber.log.Timber;
 
 import static com.kickstarter.libs.utils.TransitionUtils.slideInFromLeft;
 
@@ -148,6 +151,37 @@ public final class CommentsActivity extends BaseActivity<CommentsViewModel> impl
       .compose(bindToLifecycle())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe(ViewUtils.showToast(this));
+
+    // Temp benchmarking
+    for (int i = 0; i < 1_000_000; i ++) {
+      if (i == 0) {
+        Log.d("DEBUG", "sealed classes start time: " + System.currentTimeMillis());
+      }
+      Timber.d(ConvertedKoalaContext.Comments.PROJECT.INSTANCE.trackingString());
+      if (i == 999_999) {
+        Log.d("DEBUG", "sealed classes end time: " + System.currentTimeMillis());
+      }
+    }
+
+//    for (int i = 0; i < 1_000_000; i ++) {
+//      if (i == 0) {
+//        Log.d("DEBUG", "static classes start time: " + System.currentTimeMillis());
+//      }
+//      Timber.d(StaticKoalaContext.Comments.PROJECT);
+//      if (i == 999_999) {
+//        Log.d("DEBUG", "static classes end time: " + System.currentTimeMillis());
+//      }
+//    }
+//
+//    for (int i = 0; i < 1_000_000; i ++) {
+//      if (i == 0) {
+//        Log.d("DEBUG", "enum classes start time: " + System.currentTimeMillis());
+//      }
+//      Timber.d(KoalaContext.Comments.PROJECT.getTrackingString());
+//      if (i == 999_999) {
+//        Log.d("DEBUG", "enum classes end time: " + System.currentTimeMillis());
+//      }
+//    }
   }
 
   @Override
