@@ -64,7 +64,8 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
       .map(Config::countryCode)
       .compose(combineLatestPair(project.map(Project::country)))
       .map(configCountryAndProjectCountry ->
-        ProjectUtils.isUSUserViewingNonUSProject(configCountryAndProjectCountry.first, configCountryAndProjectCountry.second));
+        ProjectUtils.isUSUserViewingNonUSProject(configCountryAndProjectCountry.first, configCountryAndProjectCountry.second)
+      );
 
     // Hide 'all gone' header if limit has not been reached, or reward has been backed by user.
     projectAndReward
@@ -211,11 +212,9 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
       .subscribe(usdConversionTextViewIsHidden);
 
     projectAndReward
-      .map(pr -> ksCurrency.format(pr.second.minimum(), pr.first, true, true, RoundingMode.UP))
-      .compose(takeWhen(
-        shouldDisplayUsdConversion
-          .filter(BooleanUtils::isTrue)
-      ))
+      .map(pr ->
+        ksCurrency.format(pr.second.minimum(), pr.first, true, true, RoundingMode.UP)
+      )
       .compose(bindToLifecycle())
       .subscribe(usdConversionTextViewText);
 
