@@ -36,7 +36,11 @@ public final class ViewPledgeViewModelTest extends KSRobolectricTestCase {
   private ViewPledgeViewModel vm;
   private final TestSubscriber<String> backerNameTextViewTextTest = TestSubscriber.create();
   private final TestSubscriber<String> backerNumberTextViewTextTest = TestSubscriber.create();
+
   private final TestSubscriber<Pair<String, String>> backingAmountAndDateTextViewTextTest = TestSubscriber.create();
+  private final TestSubscriber<String> backingAmountTextViewTextTest = TestSubscriber.create();
+  private final TestSubscriber<String> backingDateTextViewTextTest = TestSubscriber.create();
+
   private final TestSubscriber<String> backingStatusTextViewTest = TestSubscriber.create();
   private final TestSubscriber<String> creatorNameTextViewTextTest = TestSubscriber.create();
   private final TestSubscriber<Void> goBackTest = TestSubscriber.create();
@@ -55,7 +59,11 @@ public final class ViewPledgeViewModelTest extends KSRobolectricTestCase {
 
     this.vm.outputs.backerNameTextViewText().subscribe(this.backerNameTextViewTextTest);
     this.vm.outputs.backerNumberTextViewText().subscribe(this.backerNumberTextViewTextTest);
+
     this.vm.outputs.backingAmountAndDateTextViewText().subscribe(this.backingAmountAndDateTextViewTextTest);
+    this.vm.outputs.backingAmountAndDateTextViewText().map(p -> p.first).subscribe(this.backingAmountTextViewTextTest);
+    this.vm.outputs.backingAmountAndDateTextViewText().map(p -> p.second).subscribe(this.backingDateTextViewTextTest);
+
     this.vm.outputs.backingStatus().subscribe(this.backingStatusTextViewTest);
     this.vm.outputs.creatorNameTextViewText().subscribe(this.creatorNameTextViewTextTest);
     this.vm.outputs.goBack().subscribe(this.goBackTest);
@@ -68,9 +76,6 @@ public final class ViewPledgeViewModelTest extends KSRobolectricTestCase {
     this.vm.outputs.rewardMinimumAndDescriptionTextViewText().subscribe(this.rewardMinimumAndDescriptionTextViewTextTest);
     this.vm.outputs.rewardsItems().subscribe(this.rewardsItemsTest);
     this.vm.outputs.rewardsItemsAreHidden().subscribe(this.rewardsItemsAreHiddenTest);
-
-
-
   }
 
   @Test
@@ -114,6 +119,9 @@ public final class ViewPledgeViewModelTest extends KSRobolectricTestCase {
     this.backingAmountAndDateTextViewTextTest.assertValues(
       Pair.create("$50", DateTimeUtils.fullDate(backing.pledgedAt()))
     );
+
+    this.backingAmountTextViewTextTest.assertValues("$50");
+    this.backingDateTextViewTextTest.assertValues(DateTimeUtils.fullDate(backing.pledgedAt()));
   }
 
   @Test
@@ -331,9 +339,5 @@ public final class ViewPledgeViewModelTest extends KSRobolectricTestCase {
 
   private @NonNull Intent intent(final @NonNull Backing backing) {
     return new Intent().putExtra(IntentKey.PROJECT, backing.project());
-  }
-
-  private @NonNull ViewPledgeViewModel vm(final @NonNull Backing backing) {
-    return new ViewPledgeViewModel(environment(backing));
   }
 }
