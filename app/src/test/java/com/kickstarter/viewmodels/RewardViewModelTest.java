@@ -1,5 +1,6 @@
 package com.kickstarter.viewmodels;
 
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import com.kickstarter.KSRobolectricTestCase;
@@ -55,7 +56,7 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
   }
 
   @Test
-  public void testBackersTextViewIsHidden() {
+  public void testBackersTextViewIsHidden() {/**/
     final RewardViewModel vm = new RewardViewModel(environment());
     final Project project = ProjectFactory.project();
 

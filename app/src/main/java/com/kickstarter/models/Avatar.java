@@ -24,4 +24,6 @@ public abstract class Avatar implements Parcelable {
   public static Builder builder() {
     return new AutoParcel_Avatar.Builder();
   }
+
+  public abstract Builder toBuilder();
 }
