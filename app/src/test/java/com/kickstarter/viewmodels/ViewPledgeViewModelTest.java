@@ -116,10 +116,6 @@ public final class ViewPledgeViewModelTest extends KSRobolectricTestCase {
 
     this.vm.intent(this.intent(backing));
 
-    this.backingAmountAndDateTextViewTextTest.assertValues(
-      Pair.create("$50", DateTimeUtils.fullDate(backing.pledgedAt()))
-    );
-
     this.backingAmountTextViewTextTest.assertValues("$50");
     this.backingDateTextViewTextTest.assertValues(DateTimeUtils.fullDate(backing.pledgedAt()));
   }
