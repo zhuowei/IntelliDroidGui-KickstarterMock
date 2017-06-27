@@ -10,14 +10,20 @@ import android.support.annotation.Nullable;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.kickstarter.KSApplication;
+import com.kickstarter.libs.Config;
 import com.kickstarter.libs.CurrentConfigType;
 import com.kickstarter.libs.Koala;
 import com.kickstarter.libs.Logout;
-import com.kickstarter.libs.rx.transformers.Transformers;
 import com.kickstarter.services.ApiClientType;
 import com.kickstarter.services.apiresponses.ErrorEnvelope;
 
 import javax.inject.Inject;
+
+import rx.Notification;
+import rx.Observable;
+
+import static com.kickstarter.libs.rx.transformers.Transformers.errors;
+import static com.kickstarter.libs.rx.transformers.Transformers.values;
 
 public final class ApplicationLifecycleUtil implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
   protected @Inject Koala koala;
@@ -43,19 +49,27 @@ public final class ApplicationLifecycleUtil implements Application.ActivityLifec
 
   @Override
   public void onActivityResumed(final @NonNull Activity activity) {
-    if(isInBackground){
-      koala.trackAppOpen();
+    if (this.isInBackground){
+      this.koala.trackAppOpen();
 
       // Facebook: logs 'install' and 'app activate' App Events.
       AppEventsLogger.activateApp(activity);
 
       // Refresh the config file
-      this.client.config()
-        .compose(Transformers.pipeApiErrorsTo(this::handleConfigApiError))
-        .compose(Transformers.neverError())
+      final Observable<Notification<Config>> configNotification = this.client.config()
+        .materialize();
+
+      configNotification
+        .compose(values())
+        .ofType(Config.class)
         .subscribe(this.config::config);
 
-      isInBackground = false;
+      configNotification
+        .compose(errors())
+        .ofType(ErrorEnvelope.class)
+        .subscribe(this::handleConfigApiError);
+
+      this.isInBackground = false;
     }
   }
 
@@ -66,7 +80,7 @@ public final class ApplicationLifecycleUtil implements Application.ActivityLifec
    */
   private void handleConfigApiError(final @NonNull ErrorEnvelope error) {
     if (error.httpCode() == 401) {
-      logout.execute();
+      this.logout.execute();
       ApplicationUtils.startNewDiscoveryActivity(this.application);
     }
   }
@@ -95,7 +109,7 @@ public final class ApplicationLifecycleUtil implements Application.ActivityLifec
 
   @Override
   public void onLowMemory() {
-    koala.trackMemoryWarning();
+    this.koala.trackMemoryWarning();
   }
 
   /**
@@ -106,8 +120,8 @@ public final class ApplicationLifecycleUtil implements Application.ActivityLifec
   @Override
   public void onTrimMemory(final int i) {
     if(i == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
-      koala.trackAppClose();
-      isInBackground = true;
+      this.koala.trackAppClose();
+      this.isInBackground = true;
     }
   }
 }

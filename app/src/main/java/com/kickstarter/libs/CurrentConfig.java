@@ -5,16 +5,17 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.kickstarter.libs.preferences.StringPreferenceType;
-import com.kickstarter.libs.rx.transformers.Transformers;
 import com.kickstarter.libs.utils.ObjectUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.BehaviorSubject;
 import timber.log.Timber;
+
+import static com.kickstarter.libs.rx.transformers.Transformers.neverError;
+import static com.kickstarter.libs.rx.transformers.Transformers.observeForUI;
 
 public final class CurrentConfig implements CurrentConfigType {
   private final static String ASSET_PATH = "json/server-config.json";
@@ -30,16 +31,16 @@ public final class CurrentConfig implements CurrentConfigType {
       .map(path -> configJSONString(path, assetManager))
       .map(json -> gson.fromJson(json, Config.class))
       .filter(ObjectUtils::isNotNull)
-      .compose(Transformers.neverError())
-      .subscribeOn(AndroidSchedulers.mainThread());
+      .compose(neverError())
+      .compose(observeForUI());
 
     // Loads config from string preference
     final Observable<Config> prefConfig = Observable.just(configPreference)
       .map(StringPreferenceType::get)
       .map(json -> gson.fromJson(json, Config.class))
       .filter(ObjectUtils::isNotNull)
-      .compose(Transformers.neverError())
-      .subscribeOn(AndroidSchedulers.mainThread());
+      .compose(neverError())
+      .compose(observeForUI());
 
     // Seed config observable with what's cached
     Observable.concat(prefConfig, diskConfig)

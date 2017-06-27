@@ -6,7 +6,6 @@ import com.kickstarter.services.ApiException;
 import com.kickstarter.services.apiresponses.ErrorEnvelope;
 
 import rx.Observable;
-import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 public final class Transformers {
@@ -53,18 +52,6 @@ public final class Transformers {
   }
 
   /**
-   * Prevents an observable from erroring by chaining `onErrorResumeNext`,
-   * and any errors that occur will be piped into the supplied errors action.
-   * `null` values will never be sent to the publish subject.
-   *
-   * @deprecated Use {@link Observable#materialize()} instead.
-   */
-  @Deprecated
-  public static <T> NeverErrorTransformer<T> pipeErrorsTo(final @NonNull Action1<Throwable> errorAction) {
-    return new NeverErrorTransformer<>(errorAction);
-  }
-
-  /**
    * Prevents an observable from erroring on any {@link ApiException} exceptions.
    */
   public static <T> NeverApiErrorTransformer<T> neverApiError() {
@@ -82,18 +69,6 @@ public final class Transformers {
   @Deprecated
   public static <T> NeverApiErrorTransformer<T> pipeApiErrorsTo(final @NonNull PublishSubject<ErrorEnvelope> errorSubject) {
     return new NeverApiErrorTransformer<>(errorSubject::onNext);
-  }
-
-  /**
-   * Prevents an observable from erroring on any {@link ApiException} exceptions,
-   * and any errors that do occur will be piped into the supplied
-   * errors actions. `null` values will never be sent to the action.
-   *
-   * @deprecated Use {@link Observable#materialize()} instead.
-   */
-  @Deprecated
-  public static <T> NeverApiErrorTransformer<T> pipeApiErrorsTo(final @NonNull Action1<ErrorEnvelope> errorAction) {
-    return new NeverApiErrorTransformer<>(errorAction);
   }
 
   /**
