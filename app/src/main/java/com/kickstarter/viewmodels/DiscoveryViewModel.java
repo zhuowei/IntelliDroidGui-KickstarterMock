@@ -6,6 +6,8 @@ import android.util.Pair;
 
 import com.kickstarter.libs.ActivityViewModel;
 import com.kickstarter.libs.BuildCheck;
+import com.kickstarter.libs.Config;
+import com.kickstarter.libs.CurrentConfigType;
 import com.kickstarter.libs.CurrentUserType;
 import com.kickstarter.libs.Environment;
 import com.kickstarter.libs.FeatureKey;
@@ -13,6 +15,7 @@ import com.kickstarter.libs.utils.BooleanUtils;
 import com.kickstarter.libs.utils.DiscoveryDrawerUtils;
 import com.kickstarter.libs.utils.DiscoveryUtils;
 import com.kickstarter.libs.utils.IntegerUtils;
+import com.kickstarter.libs.utils.ObjectUtils;
 import com.kickstarter.models.Category;
 import com.kickstarter.models.User;
 import com.kickstarter.services.ApiClientType;
@@ -46,6 +49,7 @@ import static com.kickstarter.libs.utils.ObjectUtils.coalesce;
 public final class DiscoveryViewModel extends ActivityViewModel<DiscoveryActivity> implements DiscoveryViewModelInputs,
   DiscoveryViewModelOutputs {
   private final ApiClientType apiClient;
+  private final CurrentConfigType currentConfig;
   private final WebClientType webClient;
   private final BuildCheck buildCheck;
   private final CurrentUserType currentUser;
@@ -53,10 +57,11 @@ public final class DiscoveryViewModel extends ActivityViewModel<DiscoveryActivit
   public DiscoveryViewModel(final @NonNull Environment environment) {
     super(environment);
 
-    apiClient = environment.apiClient();
-    buildCheck = environment.buildCheck();
-    currentUser = environment.currentUser();
-    webClient = environment.webClient();
+    this.apiClient = environment.apiClient();
+    this.buildCheck = environment.buildCheck();
+    this.currentConfig = environment.currentConfig();
+    this.currentUser = environment.currentUser();
+    this.webClient = environment.webClient();
 
     buildCheck.bind(this, webClient);
 
@@ -69,8 +74,10 @@ public final class DiscoveryViewModel extends ActivityViewModel<DiscoveryActivit
     final Observable<Boolean> userIsCreator = currentUser.observable()
       .map(u -> u != null && IntegerUtils.isNonZero(u.createdProjectsCount()));
 
-    final Observable<Boolean> creatorViewFeatureFlagIsEnabled = environment.currentConfig().observable()
-      .map(config -> coalesce(config.features().get(FeatureKey.ANDROID_CREATOR_VIEW), false));
+    final Observable<Boolean> creatorViewFeatureFlagIsEnabled = this.currentConfig.observable()
+      .map(Config::features)
+      .filter(ObjectUtils::isNotNull)
+      .map(f -> coalesce(f.get(FeatureKey.ANDROID_CREATOR_VIEW), false));
 
     this.creatorDashboardButtonIsGone = Observable.combineLatest(
       userIsCreator,
