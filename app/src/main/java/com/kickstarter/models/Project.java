@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
+import com.google.gson.annotations.SerializedName;
 import com.kickstarter.libs.qualifiers.AutoGson;
 import com.kickstarter.libs.utils.DateTimeUtils;
 import com.kickstarter.libs.utils.IntegerUtils;
@@ -33,6 +34,8 @@ public abstract class Project implements Parcelable {
   public abstract String currency(); // e.g.: USD
   public abstract String currencySymbol(); // e.g.: $
   public abstract boolean currencyTrailingCode();
+  public abstract @Nullable String currentCurrency();
+  public abstract @Nullable @SerializedName("fx_rate") Float currentCurrencyRate();
   public abstract @Nullable DateTime featuredAt();
   public abstract @Nullable List<User> friends();
   public abstract @Nullable DateTime deadline();
@@ -69,6 +72,8 @@ public abstract class Project implements Parcelable {
     public abstract Builder currency(String __);
     public abstract Builder currencySymbol(String __);
     public abstract Builder currencyTrailingCode(boolean __);
+    public abstract Builder currentCurrency(String __);
+    public abstract Builder currentCurrencyRate(Float __);
     public abstract Builder deadline(DateTime __);
     public abstract Builder featuredAt(DateTime __);
     public abstract Builder friends(List<User> __);
@@ -216,6 +221,10 @@ public abstract class Project implements Parcelable {
     }
   }
 
+  public @Nullable Double goalCurrentCurrency() {
+    return currentCurrencyRate() != null ? Math.floor(goal()) * currentCurrencyRate() : null;
+  }
+
   public boolean hasComments() {
     return IntegerUtils.isNonZero(this.commentsCount());
   }
@@ -311,6 +320,10 @@ public abstract class Project implements Parcelable {
   public @NonNull String param() {
     final String slug = slug();
     return slug != null ? slug : String.valueOf(id());
+  }
+
+  public @Nullable Double pledgedCurrentCurrency() {
+    return currentCurrencyRate() != null ? Math.floor(pledged()) * currentCurrencyRate() : null;
   }
 
   public @NonNull String secureWebProjectUrl() {

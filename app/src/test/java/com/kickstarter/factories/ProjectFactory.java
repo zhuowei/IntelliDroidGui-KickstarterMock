@@ -33,6 +33,8 @@ public final class ProjectFactory {
       .currency("USD")
       .currencySymbol("$")
       .currencyTrailingCode(true)
+      .currentCurrency("USD")
+      .currentCurrencyRate(1.31f)
       .goal(100.0f)
       .id(IdFactory.id())
       .pledged(50.0f)
