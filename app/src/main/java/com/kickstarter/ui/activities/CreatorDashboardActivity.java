@@ -43,13 +43,13 @@ public final class CreatorDashboardActivity extends BaseActivity<CreatorDashboar
     // Set up the bottom sheet recycler view.
     this.bottomSheetAdapter = new CreatorDashboardBottomSheetAdapter();
     this.bottomSheetRecyclerView.setAdapter(this.bottomSheetAdapter);
-    this.bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(this)); // todo: reuse LayoutManager?
+    this.bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     this.bottomSheetBehavior = BottomSheetBehavior.from(this.bottomSheetRecyclerView);
 
     this.viewModel.outputs.projectAndStats()
       .compose(bindToLifecycle())
       .compose(observeForUI())
-      .subscribe(this::createProjectDashboardFragments);
+      .subscribe(this::createProjectDashboardFragment);
 
     this.viewModel.outputs.projectsForBottomSheet()
       .compose(bindToLifecycle())
@@ -61,7 +61,7 @@ public final class CreatorDashboardActivity extends BaseActivity<CreatorDashboar
     this.bottomSheetAdapter.takeProjects(projects);
   }
 
-  private void createProjectDashboardFragments(final @NonNull Pair<Project, ProjectStatsEnvelope> projectAndStats) {
+  private void createProjectDashboardFragment(final @NonNull Pair<Project, ProjectStatsEnvelope> projectAndStats) {
     final FragmentManager fragmentManager = getSupportFragmentManager();
     final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     final CreatorDashboardFragment fragment = CreatorDashboardFragment.newInstance(projectAndStats);
