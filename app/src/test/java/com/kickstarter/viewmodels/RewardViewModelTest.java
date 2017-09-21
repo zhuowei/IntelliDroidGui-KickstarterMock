@@ -435,6 +435,37 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
   }
 
   @Test
+  public void testConversionLabel_US_User_NonUS_Project_ConfiguredWithReward() {
+    // Set project's country to CA and currency preference to MXN.
+    final Project project = ProjectFactory.caProject()
+      .toBuilder()
+      .staticUsdRate(0.76f)
+      .currentCurrency("MXN")
+      .currentCurrencyRate(2.0f)
+      .build();
+
+    // Set user's country to MX.
+    final Config config = ConfigFactory.configForMXUser();
+    final Environment environment = environment();
+    final CurrentConfigType currentConfig = environment.currentConfig();
+    environment.currentConfig().config(config);
+    final RewardViewModel vm = new RewardViewModel(environment);
+
+    final TestSubscriber<String> conversionTextViewText = TestSubscriber.create();
+    vm.outputs.conversionTextViewText().subscribe(conversionTextViewText);
+    final TestSubscriber<Boolean> conversionSectionIsHidden = TestSubscriber.create();
+    vm.outputs.conversionTextViewIsHidden().subscribe(conversionSectionIsHidden);
+
+    vm.inputs.projectAndReward(project, RewardFactory.reward());
+
+    // Mexican user viewing non-Mexican project sees conversion.
+    conversionSectionIsHidden.assertValues(false);
+
+    // Conversion label rounds up.
+    conversionTextViewText.assertValues("MX$ 2");
+  }
+
+  @Test
   public void testUsdConversionForNonUSProject() {
     // Set user's country to US.
     final Config config = ConfigFactory.configForUSUser();
@@ -448,9 +479,9 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
     final Reward reward = RewardFactory.reward();
 
     final TestSubscriber<String> usdConversionTextViewText = TestSubscriber.create();
-    vm.outputs.usdConversionTextViewText().subscribe(usdConversionTextViewText);
+    vm.outputs.conversionTextViewText().subscribe(usdConversionTextViewText);
     final TestSubscriber<Boolean> usdConversionSectionIsHidden = TestSubscriber.create();
-    vm.outputs.usdConversionTextViewIsHidden().subscribe(usdConversionSectionIsHidden);
+    vm.outputs.conversionTextViewIsHidden().subscribe(usdConversionSectionIsHidden);
 
     // USD conversion should be shown.
     vm.inputs.projectAndReward(project, reward);
@@ -479,9 +510,9 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
     final Reward reward = RewardFactory.reward();
 
     final TestSubscriber<String> usdConversionTextViewText = TestSubscriber.create();
-    vm.outputs.usdConversionTextViewText().subscribe(usdConversionTextViewText);
+    vm.outputs.conversionTextViewText().subscribe(usdConversionTextViewText);
     final TestSubscriber<Boolean> usdConversionSectionIsHidden = TestSubscriber.create();
-    vm.outputs.usdConversionTextViewIsHidden().subscribe(usdConversionSectionIsHidden);
+    vm.outputs.conversionTextViewIsHidden().subscribe(usdConversionSectionIsHidden);
 
     // USD conversion should not be shown.
     vm.inputs.projectAndReward(project, reward);
@@ -509,7 +540,7 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
     final Reward reward = RewardFactory.reward().toBuilder().minimum(0.3f).build();
 
     final TestSubscriber<String> usdConversionTextViewText = TestSubscriber.create();
-    vm.outputs.usdConversionTextViewText().subscribe(usdConversionTextViewText);
+    vm.outputs.conversionTextViewText().subscribe(usdConversionTextViewText);
 
     // USD conversion should be rounded up.
     vm.inputs.projectAndReward(project, reward);

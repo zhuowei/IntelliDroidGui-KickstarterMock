@@ -29,6 +29,16 @@ public interface RewardViewModelOutputs {
   Observable<Boolean> backersTextViewIsHidden();
 
   /**
+   * Returns `true` if the USD conversion section should be hidden, `false` otherwise.
+   */
+  Observable<Boolean> conversionTextViewIsHidden();
+
+  /**
+   * Set the conversion text view.
+   */
+  Observable<String> conversionTextViewText();
+
+  /**
    * Set the description TextView's text.
    */
   Observable<String> descriptionTextViewText();
@@ -127,16 +137,6 @@ public interface RewardViewModelOutputs {
    * Use the reward's title to set the title text.
    */
   Observable<String> titleTextViewText();
-
-  /**
-   * Returns `true` if the USD conversion section should be hidden, `false` otherwise.
-   */
-  Observable<Boolean> usdConversionTextViewIsHidden();
-
-  /**
-   * Set the USD conversion.
-   */
-  Observable<String> usdConversionTextViewText();
 
   /**
    * Returns `true` if the white overlay indicating a reward is disabled should be hidden, `false` otherwise.

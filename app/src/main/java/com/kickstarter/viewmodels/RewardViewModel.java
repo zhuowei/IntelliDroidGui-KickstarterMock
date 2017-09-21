@@ -10,6 +10,7 @@ import com.kickstarter.libs.Environment;
 import com.kickstarter.libs.KSCurrency;
 import com.kickstarter.libs.utils.BackingUtils;
 import com.kickstarter.libs.utils.BooleanUtils;
+import com.kickstarter.libs.utils.I18nUtils;
 import com.kickstarter.libs.utils.IntegerUtils;
 import com.kickstarter.libs.utils.NumberUtils;
 import com.kickstarter.libs.utils.ObjectUtils;
@@ -60,11 +61,12 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
     final Observable<Boolean> rewardIsSelected = this.projectAndReward
       .map(pr -> BackingUtils.isBacked(pr.first, pr.second));
 
-    final Observable<Boolean> shouldDisplayUsdConversion = currentConfig.observable()
+    final Observable<Boolean> shouldDisplayCurrencyConversion = currentConfig.observable()
       .map(Config::countryCode)
       .compose(combineLatestPair(project.map(Project::country)))
       .map(configCountryAndProjectCountry ->
-        ProjectUtils.isUSUserViewingNonUSProject(configCountryAndProjectCountry.first, configCountryAndProjectCountry.second));
+        I18nUtils.needsConversion(configCountryAndProjectCountry.second, configCountryAndProjectCountry.second)
+      );
 
     // Hide 'all gone' header if limit has not been reached, or reward has been backed by user.
     this.projectAndReward
@@ -210,20 +212,20 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
       .compose(bindToLifecycle())
       .subscribe(this.titleTextViewText);
 
-    shouldDisplayUsdConversion
+    shouldDisplayCurrencyConversion
       .map(BooleanUtils::negate)
       .distinctUntilChanged()
       .compose(bindToLifecycle())
-      .subscribe(this.usdConversionTextViewIsHidden);
+      .subscribe(this.conversionTextViewIsGone);
 
     this.projectAndReward
       .map(pr -> ksCurrency.format(pr.second.minimum(), pr.first, true, true, RoundingMode.UP))
       .compose(takeWhen(
-        shouldDisplayUsdConversion
+        shouldDisplayCurrencyConversion
           .filter(BooleanUtils::isTrue)
       ))
       .compose(bindToLifecycle())
-      .subscribe(this.usdConversionTextViewText);
+      .subscribe(this.conversionTextViewText);
 
     this.projectAndReward
       .map(pr -> RewardUtils.isLimitReached(pr.second) && !BackingUtils.isBacked(pr.first, pr.second))
@@ -251,6 +253,8 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
   private final BehaviorSubject<Boolean> allGoneTextViewIsHidden = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> backersTextViewIsHidden = BehaviorSubject.create();
   private final BehaviorSubject<Integer> backersTextViewText = BehaviorSubject.create();
+  private final BehaviorSubject<String> conversionTextViewText = BehaviorSubject.create();
+  private final BehaviorSubject<Boolean> conversionTextViewIsGone = BehaviorSubject.create();
   private final BehaviorSubject<String> descriptionTextViewText = BehaviorSubject.create();
   private final BehaviorSubject<DateTime> estimatedDeliveryDateTextViewText = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> estimatedDeliveryDateSectionIsHidden = BehaviorSubject.create();
@@ -270,8 +274,6 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
   private final BehaviorSubject<Boolean> selectedOverlayIsHidden = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> shippingSummarySectionIsHidden = BehaviorSubject.create();
   private final BehaviorSubject<String> shippingSummaryTextViewText = BehaviorSubject.create();
-  private final BehaviorSubject<String> usdConversionTextViewText = BehaviorSubject.create();
-  private final BehaviorSubject<Boolean> usdConversionTextViewIsHidden = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> whiteOverlayIsHidden = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> rewardDescriptionIsHidden = BehaviorSubject.create();
 
@@ -374,12 +376,12 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
     return this.titleTextViewText;
   }
 
-  @Override public @NonNull Observable<Boolean> usdConversionTextViewIsHidden() {
-    return this.usdConversionTextViewIsHidden;
+  @Override public @NonNull Observable<Boolean> conversionTextViewIsHidden() {
+    return this.conversionTextViewIsGone;
   }
 
-  @Override public @NonNull Observable<String> usdConversionTextViewText() {
-    return this.usdConversionTextViewText;
+  @Override public @NonNull Observable<String> conversionTextViewText() {
+    return this.conversionTextViewText;
   }
 
   @Override public @NonNull Observable<Boolean> whiteOverlayIsHidden() {

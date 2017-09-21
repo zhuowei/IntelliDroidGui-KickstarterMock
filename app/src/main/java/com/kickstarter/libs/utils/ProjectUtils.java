@@ -133,14 +133,14 @@ public final class ProjectUtils {
    * project has already finished.
    */
   public static @NonNull Long timeInSecondsUntilDeadline(final @NonNull Project project) {
-    return Math.max(0L,
-      new Duration(new DateTime(), project.deadline()).getStandardSeconds());
+    return Math.max(0L, new Duration(new DateTime(), project.deadline()).getStandardSeconds());
   }
 
   public static boolean userIsCreator(final @NonNull Project project, final @NonNull User user) {
     return project.creator().id() == user.id();
   }
 
+  // todo: add more helpers for currency preference
   public static boolean isUSUserViewingNonUSProject(final @NonNull String userCountry, final @NonNull String projectCountry) {
     return I18nUtils.isCountryUS(userCountry) && !I18nUtils.isCountryUS(projectCountry);
   }
