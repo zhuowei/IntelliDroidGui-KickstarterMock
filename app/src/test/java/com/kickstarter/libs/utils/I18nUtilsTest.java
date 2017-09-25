@@ -1,6 +1,8 @@
 package com.kickstarter.libs.utils;
 
 import com.kickstarter.factories.LocationFactory;
+import com.kickstarter.factories.ProjectFactory;
+import com.kickstarter.models.Project;
 
 import junit.framework.TestCase;
 
@@ -20,5 +22,16 @@ public final class I18nUtilsTest extends TestCase {
   public void testIsCountryUS() {
     assertTrue(I18nUtils.isCountryUS(LocationFactory.unitedStates().country()));
     assertFalse(I18nUtils.isCountryUS(LocationFactory.germany().country()));
+  }
+
+  public void testNeedsConversion() {
+    final Project project = ProjectFactory.project()
+      .toBuilder()
+      .currentCurrency("MXN")
+      .currentCurrencyRate(2.0f)
+      .build();
+
+    // todo: move out CurrencyOptions
+//    assertTrue(I18nUtils.needsConversion(project, "USD", ));
   }
 }

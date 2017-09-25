@@ -425,6 +425,36 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
   }
 
   @Test
+  public void testConversionLabel_MXN_User_CA_Project_ConfiguredWithReward() {
+    // Set project's country to CA and currency preference to MXN.
+    final Project project = ProjectFactory.caProject()
+      .toBuilder()
+      .staticUsdRate(0.76f)
+      .currentCurrency("MXN")
+      .currentCurrencyRate(2.0f)
+      .build();
+
+    final Reward reward = RewardFactory.reward()
+      .toBuilder()
+      .minimum(1)
+      .build();
+
+    // Set user's country to MX.
+    final Config config = ConfigFactory.configForMXUser();
+    final Environment environment = environment();
+    environment.currentConfig().config(config);
+
+    setUpEnvironment(environment);
+    this.vm.inputs.projectAndReward(project, reward);
+
+    // Mexican user viewing Canadian project sees currency conversion.
+    this.conversionSectionIsGone.assertValues(false);
+
+    // Conversion label rounds up.
+    this.conversionTextViewText.assertValues("MX$ 2");
+  }
+
+  @Test
   public void testUsdConversionForNonUSProject() {
     // Set user's country to US.
     final Config config = ConfigFactory.configForUSUser();

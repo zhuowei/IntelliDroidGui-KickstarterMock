@@ -32,6 +32,8 @@ public final class ProjectFactory {
       .createdAt(DateTime.now())
       .currency("USD")
       .currencySymbol("$")
+      .currentCurrency(null)
+      .currentCurrencyRate(null)
       .currencyTrailingCode(true)
       .goal(100.0f)
       .id(IdFactory.id())
@@ -124,6 +126,14 @@ public final class ProjectFactory {
       .toBuilder()
       .backing(backing)
       .isBacking(true)
+      .build();
+  }
+
+  public static @NonNull Project currencyPreferenceSet() {
+    return project()
+      .toBuilder()
+      .currentCurrency("USD")
+      .currentCurrencyRate(1.31f)
       .build();
   }
 

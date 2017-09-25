@@ -39,6 +39,12 @@ public final class ConfigFactory {
       .build();
   }
 
+  public static @NonNull Config configForMXUser() {
+    return config().toBuilder()
+      .countryCode("MX")
+      .build();
+  }
+
   public static @NonNull Config configForUSUser() {
     return config();
   }

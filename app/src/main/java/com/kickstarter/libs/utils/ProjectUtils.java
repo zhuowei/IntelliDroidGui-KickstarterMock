@@ -133,8 +133,7 @@ public final class ProjectUtils {
    * project has already finished.
    */
   public static @NonNull Long timeInSecondsUntilDeadline(final @NonNull Project project) {
-    return Math.max(0L,
-      new Duration(new DateTime(), project.deadline()).getStandardSeconds());
+    return Math.max(0L, new Duration(new DateTime(), project.deadline()).getStandardSeconds());
   }
 
   public static boolean userIsCreator(final @NonNull Project project, final @NonNull User user) {

@@ -10,6 +10,7 @@ import com.kickstarter.libs.Environment;
 import com.kickstarter.libs.KSCurrency;
 import com.kickstarter.libs.utils.BackingUtils;
 import com.kickstarter.libs.utils.BooleanUtils;
+import com.kickstarter.libs.utils.I18nUtils;
 import com.kickstarter.libs.utils.IntegerUtils;
 import com.kickstarter.libs.utils.NumberUtils;
 import com.kickstarter.libs.utils.ObjectUtils;
@@ -30,7 +31,6 @@ import rx.Observable;
 import rx.subjects.PublishSubject;
 
 import static com.kickstarter.libs.rx.transformers.Transformers.coalesce;
-import static com.kickstarter.libs.rx.transformers.Transformers.combineLatestPair;
 import static com.kickstarter.libs.rx.transformers.Transformers.takeWhen;
 
 public interface RewardViewModel {
@@ -148,11 +148,19 @@ public interface RewardViewModel {
       final Observable<Boolean> rewardIsSelected = this.projectAndReward
         .map(pr -> BackingUtils.isBacked(pr.first, pr.second));
 
-      final Observable<Boolean> shouldDisplayUsdConversion = this.currentConfig.observable()
-        .map(Config::countryCode)
-        .compose(combineLatestPair(project.map(Project::country)))
-        .map(configCountryAndProjectCountry ->
-          ProjectUtils.isUSUserViewingNonUSProject(configCountryAndProjectCountry.first, configCountryAndProjectCountry.second));
+//      final Observable<Boolean> shouldDisplayUsdConversion = this.currentConfig.observable()
+//        .map(Config::countryCode)
+//        .compose(combineLatestPair(project.map(Project::country)))
+//        .map(configCountryAndProjectCountry ->
+//          ProjectUtils.isUSUserViewingNonUSProject(configCountryAndProjectCountry.first, configCountryAndProjectCountry.second));
+
+      final Observable<Boolean> shouldDisplayCurrencyConversion = Observable.combineLatest(
+        this.currentConfig.observable().map(Config::countryCode),
+        this.projectAndReward.map(pr -> this.ksCurrency.currencyOptions(pr.second.minimum(), pr.first)),
+        project,
+        ConversionData::new
+      )
+      .map(data -> I18nUtils.needsConversion(data.project, data.configCountry, data.currencyOptions));
 
       // Hide 'all gone' header if limit has not been reached, or reward has been backed by user.
       this.allGoneTextViewIsGone = this.projectAndReward
@@ -168,13 +176,14 @@ public interface RewardViewModel {
         .map(Reward::backersCount)
         .filter(ObjectUtils::isNotNull);
 
-      this.conversionTextViewIsGone = shouldDisplayUsdConversion
+      this.conversionTextViewIsGone = shouldDisplayCurrencyConversion
         .map(BooleanUtils::negate)
         .distinctUntilChanged();
 
       this.conversionTextViewText = this.projectAndReward
-        .map(pr -> this.ksCurrency.format(pr.second.minimum(), pr.first, true, true, RoundingMode.UP))
-        .compose(takeWhen(shouldDisplayUsdConversion.filter(BooleanUtils::isTrue)));
+        // todo: make a new formatter
+        .map(pr -> this.ksCurrency.format(pr.second.minimum(), pr.first, RoundingMode.UP))
+        .compose(takeWhen(shouldDisplayCurrencyConversion.filter(BooleanUtils::isTrue)));
 
       this.descriptionTextViewText = reward.map(Reward::description);
 
@@ -262,6 +271,23 @@ public interface RewardViewModel {
         .map(pr -> RewardUtils.isLimitReached(pr.second) && !BackingUtils.isBacked(pr.first, pr.second))
         .map(BooleanUtils::negate)
         .distinctUntilChanged();
+    }
+
+    /**
+     * A light-weight class to hold the data required to determine if a currency needs conversion.
+     */
+    public final class ConversionData {
+      private final String configCountry;
+      private final KSCurrency.CurrencyOptions currencyOptions;
+      private final Project project;
+
+      public ConversionData(final @NonNull String configCountry, final @NonNull KSCurrency.CurrencyOptions currencyOptions,
+        final @NonNull Project project) {
+
+        this.configCountry = configCountry;
+        this.currencyOptions = currencyOptions;
+        this.project = project;
+      }
     }
 
     private static boolean isSelectable(final @NonNull Project project, final @NonNull Reward reward) {
