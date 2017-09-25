@@ -41,6 +41,7 @@ public final class RewardViewHolder extends KSViewHolder {
 
   protected @Bind(R.id.reward_all_gone_text_view) TextView allGoneTextView;
   protected @Bind(R.id.reward_backers_text_view) TextView backersTextView;
+  protected @Bind(R.id.reward_conversion_text_view) TextView conversionTextView;
   protected @Bind(R.id.reward_description_text_view) TextView descriptionTextView;
   protected @Bind(R.id.reward_estimated_delivery_date_section) View estimatedDeliveryDateSection;
   protected @Bind(R.id.reward_estimated_delivery_date_text_view) TextView estimatedDeliveryDateTextView;
@@ -54,7 +55,6 @@ public final class RewardViewHolder extends KSViewHolder {
   protected @Bind(R.id.reward_shipping_summary_text_view) TextView shippingSummaryTextView;
   protected @Bind(R.id.reward_title_text_view) TextView titleTextView;
   protected @Bind(R.id.reward_view) CardView rewardView;
-  protected @Bind(R.id.reward_usd_conversion_text_view) TextView usdConversionTextView;
   protected @Bind(R.id.reward_white_overlay_view) View whiteOverlayView;
 
   protected @BindColor(R.color.light_green) int lightGreenColor;
@@ -63,7 +63,7 @@ public final class RewardViewHolder extends KSViewHolder {
   protected @BindString(R.string.rewards_info_limited_rewards_remaining_left_of_reward_limit) String limitedRewardsRemainingString;
   protected @BindString(R.string.rewards_title_pledge_reward_currency_or_more) String pledgeRewardCurrencyOrMoreString;
   protected @BindString(R.string.project_back_button) String projectBackButtonString;
-  protected @BindString(R.string.rewards_title_about_amount_usd) String usdConversionString;
+  protected @BindString(R.string.rewards_title_about_amount_usd) String usdConversionString;  // todo: generalize string
 
   public RewardViewHolder(final @NonNull View view) {
     super(view);
@@ -96,6 +96,16 @@ public final class RewardViewHolder extends KSViewHolder {
       .compose(bindToLifecycle())
       .compose(observeForUI())
       .subscribe(this::setBackersTextView);
+
+    this.viewModel.outputs.conversionTextViewIsGone()
+      .compose(bindToLifecycle())
+      .compose(observeForUI())
+      .subscribe(ViewUtils.setGone(this.conversionTextView));
+
+    this.viewModel.outputs.conversionTextViewText()
+      .compose(bindToLifecycle())
+      .compose(observeForUI())
+      .subscribe(this::setConversionTextView);
 
     this.viewModel.outputs.rewardDescriptionIsGone()
       .compose(bindToLifecycle())
@@ -194,16 +204,6 @@ public final class RewardViewHolder extends KSViewHolder {
       .compose(observeForUI())
       .subscribe(this.titleTextView::setText);
 
-    this.viewModel.outputs.usdConversionTextViewIsGone()
-      .compose(bindToLifecycle())
-      .compose(observeForUI())
-      .subscribe(ViewUtils.setGone(this.usdConversionTextView));
-
-    this.viewModel.outputs.usdConversionTextViewText()
-      .compose(bindToLifecycle())
-      .compose(observeForUI())
-      .subscribe(this::setUsdConversionTextView);
-
     this.viewModel.outputs.whiteOverlayIsInvisible()
       .compose(bindToLifecycle())
       .compose(observeForUI())
@@ -241,8 +241,8 @@ public final class RewardViewHolder extends KSViewHolder {
     ));
   }
 
-  private void setUsdConversionTextView(final @NonNull String amount) {
-    this.usdConversionTextView.setText(this.ksString.format(
+  private void setConversionTextView(final @NonNull String amount) {
+    this.conversionTextView.setText(this.ksString.format(
       this.usdConversionString,
       "reward_amount", amount
     ));

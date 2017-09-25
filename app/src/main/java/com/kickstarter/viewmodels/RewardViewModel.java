@@ -53,6 +53,12 @@ public interface RewardViewModel {
     /** Returns `true` if the number of backers TextView should be hidden, `false` otherwise. */
     Observable<Boolean> backersTextViewIsGone();
 
+    /** Returns `true` if the currency conversion section should be hidden, `false` otherwise. */
+    Observable<Boolean> conversionTextViewIsGone();
+
+    /** Set the currency conversion text view. */
+    Observable<String> conversionTextViewText();
+
     /** Set the description TextView's text. */
     Observable<String> descriptionTextViewText();
 
@@ -113,12 +119,6 @@ public interface RewardViewModel {
     /** Use the reward's title to set the title text. */
     Observable<String> titleTextViewText();
 
-    /** Returns `true` if the USD conversion section should be hidden, `false` otherwise. */
-    Observable<Boolean> usdConversionTextViewIsGone();
-
-    /** Set the USD conversion. */
-    Observable<String> usdConversionTextViewText();
-
     /** Returns `true` if the white overlay indicating a reward is disabled should be invisible, `false` otherwise. */
     Observable<Boolean> whiteOverlayIsInvisible();
   }
@@ -167,6 +167,14 @@ public interface RewardViewModel {
         .filter(r -> RewardUtils.isReward(r) || RewardUtils.hasBackers(r))
         .map(Reward::backersCount)
         .filter(ObjectUtils::isNotNull);
+
+      this.conversionTextViewIsGone = shouldDisplayUsdConversion
+        .map(BooleanUtils::negate)
+        .distinctUntilChanged();
+
+      this.conversionTextViewText = this.projectAndReward
+        .map(pr -> this.ksCurrency.format(pr.second.minimum(), pr.first, true, true, RoundingMode.UP))
+        .compose(takeWhen(shouldDisplayUsdConversion.filter(BooleanUtils::isTrue)));
 
       this.descriptionTextViewText = reward.map(Reward::description);
 
@@ -250,14 +258,6 @@ public interface RewardViewModel {
         .map(Reward::title)
         .filter(ObjectUtils::isNotNull);
 
-      this.usdConversionTextViewIsGone = shouldDisplayUsdConversion
-        .map(BooleanUtils::negate)
-        .distinctUntilChanged();
-
-      this.usdConversionTextViewText = this.projectAndReward
-        .map(pr -> this.ksCurrency.format(pr.second.minimum(), pr.first, true, true, RoundingMode.UP))
-        .compose(takeWhen(shouldDisplayUsdConversion.filter(BooleanUtils::isTrue)));
-
       this.whiteOverlayIsInvisible = this.projectAndReward
         .map(pr -> RewardUtils.isLimitReached(pr.second) && !BackingUtils.isBacked(pr.first, pr.second))
         .map(BooleanUtils::negate)
@@ -282,6 +282,8 @@ public interface RewardViewModel {
     private final Observable<Boolean> allGoneTextViewIsGone;
     private final Observable<Boolean> backersTextViewIsGone;
     private final Observable<Integer> backersTextViewText;
+    private final Observable<Boolean> conversionTextViewIsGone;
+    private final Observable<String> conversionTextViewText;
     private final Observable<String> descriptionTextViewText;
     private final Observable<DateTime> estimatedDeliveryDateTextViewText;
     private final Observable<Boolean> estimatedDeliveryDateSectionIsGone;
@@ -302,8 +304,6 @@ public interface RewardViewModel {
     private final Observable<String> shippingSummaryTextViewText;
     private final Observable<Project> startBackingActivity;
     private final Observable<Pair<Project, Reward>> startCheckoutActivity;
-    private final Observable<String> usdConversionTextViewText;
-    private final Observable<Boolean> usdConversionTextViewIsGone;
     private final Observable<Boolean> whiteOverlayIsInvisible;
 
     public final Inputs inputs = this;
@@ -385,11 +385,11 @@ public interface RewardViewModel {
     @Override public @NonNull Observable<String> titleTextViewText() {
       return this.titleTextViewText;
     }
-    @Override public @NonNull Observable<Boolean> usdConversionTextViewIsGone() {
-      return this.usdConversionTextViewIsGone;
+    @Override public @NonNull Observable<Boolean> conversionTextViewIsGone() {
+      return this.conversionTextViewIsGone;
     }
-    @Override public @NonNull Observable<String> usdConversionTextViewText() {
-      return this.usdConversionTextViewText;
+    @Override public @NonNull Observable<String> conversionTextViewText() {
+      return this.conversionTextViewText;
     }
     @Override public @NonNull Observable<Boolean> whiteOverlayIsInvisible() {
       return this.whiteOverlayIsInvisible;
