@@ -478,21 +478,21 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
     final Project project = ProjectFactory.caProject();
     final Reward reward = RewardFactory.reward();
 
-    final TestSubscriber<String> usdConversionTextViewText = TestSubscriber.create();
-    vm.outputs.conversionTextViewText().subscribe(usdConversionTextViewText);
+    final TestSubscriber<String> conversionTextViewText = TestSubscriber.create();
+    vm.outputs.conversionTextViewText().subscribe(conversionTextViewText);
     final TestSubscriber<Boolean> usdConversionSectionIsHidden = TestSubscriber.create();
     vm.outputs.conversionTextViewIsHidden().subscribe(usdConversionSectionIsHidden);
 
     // USD conversion should be shown.
     vm.inputs.projectAndReward(project, reward);
-    usdConversionTextViewText.assertValueCount(1);
+    conversionTextViewText.assertValueCount(1);
     usdConversionSectionIsHidden.assertValue(false);
 
     // Set user's country to CA (any country except the US is fine).
     currentConfig.config(ConfigFactory.configForCAUser());
 
     // USD conversion should now be hidden.
-    usdConversionTextViewText.assertValueCount(1);
+    conversionTextViewText.assertValueCount(1);
     usdConversionSectionIsHidden.assertValues(false, true);
   }
 

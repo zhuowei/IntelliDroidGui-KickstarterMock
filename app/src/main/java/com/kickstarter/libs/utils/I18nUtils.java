@@ -3,7 +3,7 @@ package com.kickstarter.libs.utils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.kickstarter.libs.Config;
+import com.kickstarter.libs.KSCurrency;
 import com.kickstarter.models.Project;
 
 import java.util.Locale;
@@ -29,23 +29,28 @@ public final class I18nUtils {
     return language.isEmpty() ? "en" : language;
   }
 
-  private static boolean needsConversion(final @NonNull Project project, final @NonNull String configCountry) {
-    final String currentCurrency = project.currentCurrency();
+  /**
+   * Returns if a currency needs conversion based on the project's currency rate
+   * and the user's currency preferences. Falls back to the config country for currency
+   * display if no preference selected.
+   */
+  public static boolean needsConversion(final @NonNull Project project, final @NonNull String configCountry,
+    final @NonNull KSCurrency.CurrencyOptions currencyOptions) {
 
+    final String currentCurrency = project.currentCurrency();
     if (currentCurrency == null) {
-      // should not be recursive
-      return needsConversion(project, configCountry);
+      return needsConversionForConfigCountry(project.country(), configCountry);
     } else {
-      return currentCurrency.equals(configCountry) && needsConversion(project.country(), currentCurrency);
+      return currentCurrency.equals(currencyOptions.currencyCode())
+        && needsConversionForCurrentCurrency(project.country(), currentCurrency);
     }
   }
 
-  // Todo: disambiguate this from above
-  private static boolean needsConversion(final @NonNull Config.LaunchedCountry launchedCountry, final @Nullable String userCountry) {
-    return !userCountry.equals("US") && !launchedCountry.name().equals("US");
+  private static boolean needsConversionForConfigCountry(final @NonNull String projectCountry, final @Nullable String configCountry) {
+    return "US".equals(configCountry) && !isCountryUS(projectCountry);
   }
 
-  public static boolean needsConversion(final @NonNull String projectCountry, final @NonNull String currentCurrency) {
+  public static boolean needsConversionForCurrentCurrency(final @NonNull String projectCountry, final @NonNull String currentCurrency) {
     return !projectCountry.equals(currentCurrency);
   }
 }

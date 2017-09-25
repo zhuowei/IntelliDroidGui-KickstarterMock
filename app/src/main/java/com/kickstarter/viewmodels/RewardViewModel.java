@@ -34,7 +34,6 @@ import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 
 import static com.kickstarter.libs.rx.transformers.Transformers.coalesce;
-import static com.kickstarter.libs.rx.transformers.Transformers.combineLatestPair;
 import static com.kickstarter.libs.rx.transformers.Transformers.takeWhen;
 
 public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> implements
@@ -61,12 +60,13 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
     final Observable<Boolean> rewardIsSelected = this.projectAndReward
       .map(pr -> BackingUtils.isBacked(pr.first, pr.second));
 
-    final Observable<Boolean> shouldDisplayCurrencyConversion = currentConfig.observable()
-      .map(Config::countryCode)
-      .compose(combineLatestPair(project.map(Project::country)))
-      .map(configCountryAndProjectCountry ->
-        I18nUtils.needsConversion(configCountryAndProjectCountry.second, configCountryAndProjectCountry.second)
-      );
+    final Observable<Boolean> shouldDisplayCurrencyConversion = Observable.combineLatest(
+      currentConfig.observable().map(Config::countryCode),
+      this.projectAndReward.map(pr -> ksCurrency.currencyOptions(pr.second.minimum(), pr.first, false)),
+      project,
+      ConversionData::new
+    )
+      .map(data -> I18nUtils.needsConversion(data.project, data.configCountry, data.currencyOptions));
 
     // Hide 'all gone' header if limit has not been reached, or reward has been backed by user.
     this.projectAndReward
@@ -233,6 +233,22 @@ public final class RewardViewModel extends ActivityViewModel<RewardViewHolder> i
       .distinctUntilChanged()
       .compose(bindToLifecycle())
       .subscribe(this.whiteOverlayIsHidden);
+  }
+
+  /**
+   * A light-weight class to hold the data required to determine if a currency needs conversion.
+   */
+  public final class ConversionData {
+    private final String configCountry;
+    private final KSCurrency.CurrencyOptions currencyOptions;
+    private final Project project;
+
+    public ConversionData(final @NonNull String configCountry, final @NonNull KSCurrency.CurrencyOptions currencyOptions,
+      final @NonNull Project project) {
+      this.configCountry = configCountry;
+      this.currencyOptions = currencyOptions;
+      this.project = project;
+    }
   }
 
   private static boolean isSelectable(final @NonNull Project project, final @NonNull Reward reward) {

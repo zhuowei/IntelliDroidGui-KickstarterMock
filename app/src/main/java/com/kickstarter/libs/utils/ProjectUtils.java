@@ -140,7 +140,6 @@ public final class ProjectUtils {
     return project.creator().id() == user.id();
   }
 
-  // todo: add more helpers for currency preference
   public static boolean isUSUserViewingNonUSProject(final @NonNull String userCountry, final @NonNull String projectCountry) {
     return I18nUtils.isCountryUS(userCountry) && !I18nUtils.isCountryUS(projectCountry);
   }
