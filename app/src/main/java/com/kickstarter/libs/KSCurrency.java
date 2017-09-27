@@ -67,28 +67,17 @@ public final class KSCurrency {
     return NumberUtils.format(currencyOptions.value(), numberOptions);
   }
 
-  public @NonNull String format(final float initialValue, final @NonNull Project project,
-    final @NonNull RoundingMode roundingMode) {
-
-    final CurrencyOptions currencyOptions = currencyOptions(initialValue, project);
-    final NumberOptions numberOptions = NumberOptions.builder()
-      .currencyCode(currencyOptions.currencyCode())
-      .currencySymbol(currencyOptions.currencySymbol())
-      .roundingMode(roundingMode)
-      .build();
-
-    return NumberUtils.format(currencyOptions.value(), numberOptions);
-  }
-
   /**
-   * Build {@link CurrencyOptions} based on the project the user's currency preferences.
+   * Build {@link CurrencyOptions} based on the project and the user's currency preferences.
    */
-  public @NonNull CurrencyOptions currencyOptions(final float value, final @NonNull Project project) {
+  public @NonNull CurrencyOptions currencyOptions(final float value, final @NonNull Project project,
+    final boolean preferUSD) {
+
     final Config config = this.currentConfig.getConfig();
     final Float currencyRate = project.currentCurrencyRate();
     final Float staticUsdRate = project.staticUsdRate();
 
-    if (currencyRate == null && config.countryCode().equals("US") && staticUsdRate != null) {
+    if (preferUSD && config.countryCode().equals("US") && staticUsdRate != null) {
       return CurrencyOptions.builder()
         .country("US")
         .currencySymbol("$")
@@ -101,32 +90,6 @@ public final class KSCurrency {
         .currencyCode(project.currentCurrency())
         .currencySymbol(project.currencySymbol())
         .value(value * currencyRate)
-        .build();
-    } else {
-      return CurrencyOptions.builder()
-        .country(project.country())
-        .currencyCode(project.currency())
-        .currencySymbol(project.currencySymbol())
-        .value(value)
-        .build();
-    }
-  }
-
-  /**
-   * Build {@link CurrencyOptions} based on the project and whether we would prefer to show USD. Even if USD is preferred,
-   * we only show USD if the user is in the US.
-   */
-  private @NonNull CurrencyOptions currencyOptions(final float value, final @NonNull Project project,
-    final boolean preferUSD) {
-
-    final Config config = this.currentConfig.getConfig();
-    final Float staticUsdRate = project.staticUsdRate();
-    if (preferUSD && config.countryCode().equals("US") && staticUsdRate != null) {
-      return CurrencyOptions.builder()
-        .country("US")
-        .currencySymbol("$")
-        .currencyCode("")
-        .value(value * staticUsdRate)
         .build();
     } else {
       return CurrencyOptions.builder()

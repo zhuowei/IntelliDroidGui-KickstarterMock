@@ -60,10 +60,10 @@ public final class RewardViewHolder extends KSViewHolder {
   protected @BindColor(R.color.light_green) int lightGreenColor;
   protected @BindColor(R.color.white) int whiteColor;
 
+  protected @BindString(R.string.About_reward_amount) String aboutRewardAmountString;
   protected @BindString(R.string.rewards_info_limited_rewards_remaining_left_of_reward_limit) String limitedRewardsRemainingString;
   protected @BindString(R.string.rewards_title_pledge_reward_currency_or_more) String pledgeRewardCurrencyOrMoreString;
   protected @BindString(R.string.project_back_button) String projectBackButtonString;
-  protected @BindString(R.string.rewards_title_about_amount_usd) String usdConversionString;  // todo: generalize string
 
   public RewardViewHolder(final @NonNull View view) {
     super(view);
@@ -242,10 +242,9 @@ public final class RewardViewHolder extends KSViewHolder {
   }
 
   private void setConversionTextView(final @NonNull String amount) {
-    this.conversionTextView.setText(this.ksString.format(
-      this.usdConversionString,
-      "reward_amount", amount
-    ));
+    this.conversionTextView.setText(
+      this.ksString.format(this.aboutRewardAmountString, "reward_amount", amount)
+    );
   }
 
   private void startBackingActivity(final @NonNull Project project) {

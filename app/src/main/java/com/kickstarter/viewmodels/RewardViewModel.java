@@ -148,15 +148,9 @@ public interface RewardViewModel {
       final Observable<Boolean> rewardIsSelected = this.projectAndReward
         .map(pr -> BackingUtils.isBacked(pr.first, pr.second));
 
-//      final Observable<Boolean> shouldDisplayUsdConversion = this.currentConfig.observable()
-//        .map(Config::countryCode)
-//        .compose(combineLatestPair(project.map(Project::country)))
-//        .map(configCountryAndProjectCountry ->
-//          ProjectUtils.isUSUserViewingNonUSProject(configCountryAndProjectCountry.first, configCountryAndProjectCountry.second));
-
       final Observable<Boolean> shouldDisplayCurrencyConversion = Observable.combineLatest(
         this.currentConfig.observable().map(Config::countryCode),
-        this.projectAndReward.map(pr -> this.ksCurrency.currencyOptions(pr.second.minimum(), pr.first)),
+        this.projectAndReward.map(pr -> this.ksCurrency.currencyOptions(pr.second.minimum(), pr.first, false)),
         project,
         ConversionData::new
       )
@@ -181,8 +175,7 @@ public interface RewardViewModel {
         .distinctUntilChanged();
 
       this.conversionTextViewText = this.projectAndReward
-        // todo: make a new formatter
-        .map(pr -> this.ksCurrency.format(pr.second.minimum(), pr.first, RoundingMode.UP))
+        .map(pr -> this.ksCurrency.format(pr.second.minimum(), pr.first, false, false, RoundingMode.UP))
         .compose(takeWhen(shouldDisplayCurrencyConversion.filter(BooleanUtils::isTrue)));
 
       this.descriptionTextViewText = reward.map(Reward::description);

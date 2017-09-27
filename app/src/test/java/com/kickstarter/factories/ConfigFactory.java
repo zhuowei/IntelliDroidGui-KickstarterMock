@@ -32,10 +32,17 @@ public final class ConfigFactory {
       .trailingCode(true)
       .build();
 
+    final Config.LaunchedCountry MX = Config.LaunchedCountry.builder()
+      .name("MX")
+      .currencyCode("MXN")
+      .currencySymbol("$")
+      .trailingCode(true)
+      .build();
+
     return Config.builder()
       .countryCode("US")
       .features(Collections.emptyMap())
-      .launchedCountries(Arrays.asList(US, GB, CA))
+      .launchedCountries(Arrays.asList(US, GB, CA, MX))
       .build();
   }
 
