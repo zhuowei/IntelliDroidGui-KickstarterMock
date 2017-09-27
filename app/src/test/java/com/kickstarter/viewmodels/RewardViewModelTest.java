@@ -469,6 +469,7 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
 
     // USD conversion should be shown.
     this.vm.inputs.projectAndReward(project, reward);
+
     this.conversionTextViewText.assertValueCount(1);
     this.conversionSectionIsGone.assertValue(false);
 
@@ -495,6 +496,7 @@ public final class RewardViewModelTest extends KSRobolectricTestCase {
 
     // USD conversion should not be shown.
     this.vm.inputs.projectAndReward(project, reward);
+
     this.conversionTextViewText.assertNoValues();
     this.conversionSectionIsGone.assertValue(true);
 

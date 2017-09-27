@@ -344,8 +344,11 @@ public interface RewardViewModel {
     @Override public @NonNull Observable<Integer> backersTextViewText() {
       return this.backersTextViewText;
     }
-    @Override public @NonNull Observable<Boolean> isClickable() {
-      return this.isClickable;
+    @Override public @NonNull Observable<Boolean> conversionTextViewIsGone() {
+      return this.conversionTextViewIsGone;
+    }
+    @Override public @NonNull Observable<String> conversionTextViewText() {
+      return this.conversionTextViewText;
     }
     @Override public @NonNull Observable<String> descriptionTextViewText() {
       return this.descriptionTextViewText;
@@ -355,6 +358,9 @@ public interface RewardViewModel {
     }
     @Override public @NonNull Observable<Boolean> estimatedDeliveryDateSectionIsGone() {
       return this.estimatedDeliveryDateSectionIsGone;
+    }
+    @Override public @NonNull Observable<Boolean> isClickable() {
+      return this.isClickable;
     }
     @Override public @NonNull Observable<Boolean> limitAndBackersSeparatorIsGone() {
       return this.limitAndBackersSeparatorIsGone;
@@ -403,12 +409,6 @@ public interface RewardViewModel {
     }
     @Override public @NonNull Observable<String> titleTextViewText() {
       return this.titleTextViewText;
-    }
-    @Override public @NonNull Observable<Boolean> conversionTextViewIsGone() {
-      return this.conversionTextViewIsGone;
-    }
-    @Override public @NonNull Observable<String> conversionTextViewText() {
-      return this.conversionTextViewText;
     }
     @Override public @NonNull Observable<Boolean> whiteOverlayIsInvisible() {
       return this.whiteOverlayIsInvisible;
