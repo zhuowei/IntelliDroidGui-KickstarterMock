@@ -20,8 +20,8 @@ import com.kickstarter.libs.utils.DiscoveryUtils;
 import com.kickstarter.libs.utils.StatusBarUtils;
 import com.kickstarter.services.DiscoveryParams;
 import com.kickstarter.ui.activities.ActivityFeedActivity;
-import com.kickstarter.ui.activities.CreatorDashboardActivity;
 import com.kickstarter.ui.activities.DiscoveryActivity;
+import com.kickstarter.ui.activities.FunKotlinActivity;
 import com.kickstarter.ui.activities.SearchActivity;
 
 import javax.inject.Inject;
@@ -75,7 +75,7 @@ public final class DiscoveryToolbar extends KSToolbar {
   @OnClick(R.id.creator_dashboard_button)
   protected void creatorDashboardButtonClick() {
     final Context context = getContext();
-    context.startActivity(new Intent(context, CreatorDashboardActivity.class));
+    context.startActivity(new Intent(context, FunKotlinActivity.class));
   }
 
   @OnClick({R.id.menu_button, R.id.filter_text_view})
