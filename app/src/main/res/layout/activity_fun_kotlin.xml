@@ -8,6 +8,7 @@
   tools:context="com.kickstarter.ui.activities.FunKotlinActivity">
 
   <LinearLayout
+    android:id="@+id/fun_kotlin_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">

@@ -1,15 +1,15 @@
 package com.kickstarter.viewmodels
 
+import com.kickstarter.libs.rx.transformers.Transformers
 import rx.Observable
 import rx.subjects.PublishSubject
 
 
-class FunKotlinActivityViewModel() {
+class FunKotlinActivityViewModel {
 
-  val listOutputObservable: Observable<String>
   val outputSubject: PublishSubject<List<Int>>
   val inputSubject: PublishSubject<List<Int>>
-  val threes: Observable<List<Int>>
+  val screenOutput: Observable<String>
   val textInput: PublishSubject<String>
   val shouldClearTextInput: Observable<Boolean>
 
@@ -18,31 +18,26 @@ class FunKotlinActivityViewModel() {
     this.outputSubject = PublishSubject.create()
     this.textInput = PublishSubject.create()
 
-    this.shouldClearTextInput = textInput
-      .
+    this.shouldClearTextInput = Observable.just(true)
+      .compose(Transformers.takeWhen(textInput))
 
-    this.threes = this.inputSubject
-      .map{
-        intList -> intList.filter {
-          int -> int % 3 == 0
-        }
-      }
-
-    this.listOutputObservable = this.threes
-      .map{
-        intList -> intList.fold(""){ accum, int -> accum + int.toString() + ", "}
-      }
+    this.screenOutput = textInput
   }
 
   fun textInput(stringInput: String) {
-    shouldClearTextInput
+    textInput.onNext(stringInput)
   }
 
   fun listInput(ints: List<Int>) {
     this.inputSubject.onNext(ints)
   }
 
-  fun listOutput(): Observable<String> {
-    return this.listOutputObservable
+
+  fun screenOutput(): Observable<String> {
+    return this.screenOutput
+  }
+
+  fun shouldClearTextInput(): Observable<Boolean> {
+    return this.shouldClearTextInput
   }
 }
