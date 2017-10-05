@@ -157,7 +157,7 @@ public interface LoginViewModel {
     private final Observable<String> invalidloginError;
     private final BehaviorSubject<Boolean> logInButtonIsEnabled = BehaviorSubject.create();
     private final PublishSubject<Void> loginSuccess = PublishSubject.create();
-    private final PublishSubject<String> preFillEmailFromPasswordReset = PublishSubject.create();
+    private final BehaviorSubject<String> preFillEmailFromPasswordReset = BehaviorSubject.create();
     private final BehaviorSubject<Pair<Boolean, String>> showResetPasswordSuccessDialog = BehaviorSubject.create();
     private final Observable<Void> tfaChallenge;
 

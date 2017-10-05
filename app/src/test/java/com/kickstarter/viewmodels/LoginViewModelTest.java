@@ -36,6 +36,7 @@ public class LoginViewModelTest extends KSRobolectricTestCase {
     this.vm.outputs.showResetPasswordSuccessDialog().map(showAndEmail -> showAndEmail.first).subscribe(this.showResetPasswordSuccessDialog);
     this.vm.outputs.tfaChallenge().subscribe(this.tfaChallenge);
   }
+
   @Test
   public void testLoginButtonEnabled() {
     setUpEnvironment(environment());
@@ -125,21 +126,23 @@ public class LoginViewModelTest extends KSRobolectricTestCase {
   public void testPrefillEmailAndDialog() {
     final String email = "hello@kickstarter.com";
 
-    setUpEnvironment(environment());
-
-    this.preFillEmailFromPasswordReset.assertNoValues();
-    this.showResetPasswordSuccessDialog.assertNoValues();
-
     // Start the view model with an email to prefill.
+    this.vm = new LoginViewModel.ViewModel(environment());
     this.vm.intent(new Intent().putExtra(IntentKey.EMAIL, email));
+    this.vm.outputs.preFillEmailFromPasswordReset().subscribe(this.preFillEmailFromPasswordReset);
+    this.vm.outputs.showResetPasswordSuccessDialog().map(showAndEmail -> showAndEmail.first).subscribe(this.showResetPasswordSuccessDialog);
 
     this.preFillEmailFromPasswordReset.assertValue(email);
     this.showResetPasswordSuccessDialog.assertValue(true);
 
     // Dismiss the confirmation dialog.
     vm.inputs.resetPasswordConfirmationDialogDismissed();
+    this.showResetPasswordSuccessDialog.assertValues(true, false);
 
-    // Simulate rotating the device.
+    // Simulate rotating the device, first by sending a new intent (similar to what happens after rotation).
+    this.vm.intent(new Intent().putExtra(IntentKey.EMAIL, email));
+
+    // Create new test subscribers – this emulates a new activity subscribing to the vm's outputs.
     final TestSubscriber<String> rotatedPrefillEmailFromPasswordReset = new TestSubscriber<>();
     this.vm.outputs.preFillEmailFromPasswordReset().subscribe(rotatedPrefillEmailFromPasswordReset);
     final TestSubscriber<Boolean> rotatedShowResetPasswordSuccessDialog = new TestSubscriber<>();
@@ -147,10 +150,11 @@ public class LoginViewModelTest extends KSRobolectricTestCase {
       .map(showAndEmail -> showAndEmail.first)
       .subscribe(rotatedShowResetPasswordSuccessDialog);
 
-    // Email should still be filled. Dialog should not be shown again.
-    this.preFillEmailFromPasswordReset.assertValue(email);
-    // FIXME: 10/4/17 this is failing but should I be passing in true,false?
-    this.showResetPasswordSuccessDialog.assertValue(false);
+    // Email should still be pre-filled.
+    rotatedPrefillEmailFromPasswordReset.assertValue(email);
+
+    // Dialog should not be shown again – the user has already dismissed it.
+    rotatedShowResetPasswordSuccessDialog.assertValue(false);
   }
 
   @Test
