@@ -20,7 +20,7 @@ if (file('signing.gradle').exists()) {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.kickstarter"
@@ -36,6 +36,13 @@ android {
 
         // allow for multiple language fallbacks
         resConfigs "auto"
+
+        // allow for annotation support in dependencies
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
     }
 
     signingConfigs {
@@ -128,15 +135,16 @@ android {
 
 repositories {
     jcenter()
+    google()
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:cardview-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:cardview-v7:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support:multidex:1.0.2'
+    compile 'com.android.support:recyclerview-v7:25.4.0'
     compile 'com.android.support:support-annotations:25.1.0'
     compile 'com.facebook.android:facebook-android-sdk:4.7.0'
     compile 'com.github.frankiesardo:auto-parcel:0.3.1'
@@ -220,7 +228,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'me.tatarka:gradle-retrolambda:3.4.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -240,6 +247,5 @@ gradle.taskGraph.beforeTask { Task task ->
     }
 }
 
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
