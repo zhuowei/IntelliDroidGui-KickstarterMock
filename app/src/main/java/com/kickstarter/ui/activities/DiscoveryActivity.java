@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -40,6 +41,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 
 import static com.kickstarter.libs.rx.transformers.Transformers.observeForUI;
@@ -55,6 +57,7 @@ public final class DiscoveryActivity extends BaseActivity<DiscoveryViewModel> {
   protected @Inject InternalToolsType internalTools;
 
   protected @Bind(R.id.creator_dashboard_button) IconButton creatorDashboardButton;
+  protected @Bind(R.id.creator_tools_fab) FloatingActionButton creatorToolsFab;
   protected @Bind(R.id.discovery_layout) DrawerLayout discoveryLayout;
   protected @Bind(R.id.discovery_toolbar) DiscoveryToolbar discoveryToolbar;
   protected @Bind(R.id.discovery_drawer_recycler_view) RecyclerView drawerRecyclerView;
@@ -98,6 +101,11 @@ public final class DiscoveryActivity extends BaseActivity<DiscoveryViewModel> {
       .compose(bindToLifecycle())
       .compose(observeForUI())
       .subscribe(ViewUtils.setGone(this.creatorDashboardButton));
+
+    this.viewModel.outputs.creatorToolsFabIsGone()
+      .compose(bindToLifecycle())
+      .compose(observeForUI())
+      .subscribe(ViewUtils.setGone(this.creatorToolsFab));
 
     this.viewModel.outputs.expandSortTabLayout()
       .compose(bindToLifecycle())
@@ -172,6 +180,11 @@ public final class DiscoveryActivity extends BaseActivity<DiscoveryViewModel> {
       fragments.add(DiscoveryFragment.newInstance(position));
     }
     return fragments;
+  }
+
+  @OnClick(R.id.creator_tools_fab)
+  protected void creatorToolsFabClick() {
+    startActivity(new Intent(this, CreatorDashboardActivity.class));
   }
 
   public @NonNull DrawerLayout discoveryLayout() {

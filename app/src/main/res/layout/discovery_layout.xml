@@ -77,6 +77,8 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
+    <include layout="@layout/creator_tools_fab" />
+
   </RelativeLayout>
 
   <android.support.design.widget.NavigationView

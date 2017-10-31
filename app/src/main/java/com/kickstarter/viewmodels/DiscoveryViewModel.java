@@ -83,6 +83,13 @@ public final class DiscoveryViewModel extends ActivityViewModel<DiscoveryActivit
     )
       .map(isCreatorAndViewDash -> !isCreatorAndViewDash.first || !isCreatorAndViewDash.second);
 
+    this.creatorToolsFabIsGone = Observable.combineLatest(
+      userIsCreator,
+      creatorViewFeatureFlagIsEnabled,
+      Pair::create
+    )
+      .map(isCreatorAndViewDash -> !isCreatorAndViewDash.first || !isCreatorAndViewDash.second);
+
     // Seed params when we are freshly launching the app with no data.
     final Observable<DiscoveryParams> paramsFromInitialIntent = intent()
       .take(1)
@@ -222,6 +229,7 @@ public final class DiscoveryViewModel extends ActivityViewModel<DiscoveryActivit
   private final PublishSubject<NavigationDrawerData.Section.Row> topFilterRowClick = PublishSubject.create();
 
   private final Observable<Boolean> creatorDashboardButtonIsGone;
+  private final Observable<Boolean> creatorToolsFabIsGone;
   private final BehaviorSubject<List<Integer>> clearPages = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> drawerIsOpen = BehaviorSubject.create();
   private final BehaviorSubject<Boolean> expandSortTabLayout = BehaviorSubject.create();
@@ -277,6 +285,9 @@ public final class DiscoveryViewModel extends ActivityViewModel<DiscoveryActivit
   }
   @Override public @NonNull Observable<Boolean> creatorDashboardButtonIsGone() {
     return this.creatorDashboardButtonIsGone;
+  }
+  @Override public @NonNull Observable<Boolean> creatorToolsFabIsGone() {
+    return this.creatorToolsFabIsGone;
   }
   @Override public @NonNull Observable<Boolean> drawerIsOpen() {
     return this.drawerIsOpen;

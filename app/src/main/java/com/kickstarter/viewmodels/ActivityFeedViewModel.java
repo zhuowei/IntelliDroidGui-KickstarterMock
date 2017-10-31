@@ -1,12 +1,16 @@
 package com.kickstarter.viewmodels;
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import com.kickstarter.libs.ActivityViewModel;
 import com.kickstarter.libs.ApiPaginator;
+import com.kickstarter.libs.Config;
 import com.kickstarter.libs.CurrentUserType;
 import com.kickstarter.libs.Environment;
+import com.kickstarter.libs.FeatureKey;
 import com.kickstarter.libs.KoalaContext.Update;
+import com.kickstarter.libs.utils.IntegerUtils;
 import com.kickstarter.libs.utils.ObjectUtils;
 import com.kickstarter.models.Activity;
 import com.kickstarter.models.Project;
@@ -31,6 +35,7 @@ import static com.kickstarter.libs.rx.transformers.Transformers.incrementalCount
 import static com.kickstarter.libs.rx.transformers.Transformers.neverError;
 import static com.kickstarter.libs.rx.transformers.Transformers.takePairWhen;
 import static com.kickstarter.libs.rx.transformers.Transformers.takeWhen;
+import static com.kickstarter.libs.utils.ObjectUtils.coalesce;
 
 public interface ActivityFeedViewModel {
 
@@ -48,6 +53,11 @@ public interface ActivityFeedViewModel {
   interface Outputs {
     /** Emits a list of activities representing the user's activity feed. */
     Observable<List<Activity>> activityList();
+
+    /**
+     * Emits a boolean that determines whether to show the creator tools floating action button.
+     */
+    Observable<Boolean> creatorToolsFabIsGone();
 
     /** Emits when view should be returned to Discovery projects. */
     Observable<Void> goToDiscovery();
@@ -164,6 +174,21 @@ public interface ActivityFeedViewModel {
         .filter(ObjectUtils::isNotNull)
         .compose(this.bindToLifecycle())
         .subscribe(p -> this.koala.trackViewedUpdate(p, Update.ACTIVITY));
+
+      final Observable<Boolean> userIsCreator = this.currentUser.observable()
+        .map(u -> u != null && IntegerUtils.isNonZero(u.createdProjectsCount()));
+
+      final Observable<Boolean> creatorViewFeatureFlagIsEnabled = environment.currentConfig().observable()
+        .map(Config::features)
+        .filter(ObjectUtils::isNotNull)
+        .map(f -> coalesce(f.get(FeatureKey.ANDROID_CREATOR_VIEW), false));
+
+      this.creatorToolsFabIsGone = Observable.combineLatest(
+        userIsCreator,
+        creatorViewFeatureFlagIsEnabled,
+        Pair::create
+      )
+        .map(isCreatorAndViewDash -> !isCreatorAndViewDash.first || !isCreatorAndViewDash.second);
     }
 
     private final PublishSubject<Void> discoverProjectsClick = PublishSubject.create();
@@ -179,6 +204,7 @@ public interface ActivityFeedViewModel {
     private final PublishSubject<SurveyResponse> surveyClick = PublishSubject.create();
 
     private final BehaviorSubject<List<Activity>> activityList = BehaviorSubject.create();
+    private final Observable<Boolean> creatorToolsFabIsGone;
     private final Observable<Void> goToDiscovery;
     private final Observable<Void> goToLogin;
     private final Observable<Project> goToProject;
@@ -229,6 +255,9 @@ public interface ActivityFeedViewModel {
 
     @Override public @NonNull Observable<List<Activity>> activityList() {
       return this.activityList;
+    }
+    @Override public @NonNull Observable<Boolean> creatorToolsFabIsGone() {
+      return this.creatorToolsFabIsGone;
     }
     @Override public @NonNull Observable<Void> goToDiscovery() {
       return this.goToDiscovery;

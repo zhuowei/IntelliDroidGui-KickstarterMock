@@ -30,6 +30,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.kickstarter.libs.rx.transformers.Transformers.observeForUI;
 
@@ -118,6 +119,11 @@ public final class ActivityFeedActivity extends BaseActivity<ActivityFeedViewMod
     super.onDestroy();
     this.recyclerViewPaginator.stop();
     this.recyclerView.setAdapter(null);
+  }
+
+  @OnClick(R.id.creator_tools_fab)
+  protected void creatorToolsFabClick() {
+    startActivity(new Intent(this, CreatorDashboardActivity.class));
   }
 
   private void showActivities(final @NonNull List<Activity> activities) {
