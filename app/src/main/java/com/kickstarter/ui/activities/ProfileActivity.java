@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +45,7 @@ public final class ProfileActivity extends BaseActivity<ProfileViewModel.ViewMod
   protected @Bind(R.id.backed_text_view) TextView backedTextView;
   protected @Bind(R.id.created_count_text_view) TextView createdCountTextView;
   protected @Bind(R.id.created_text_view) TextView createdTextView;
+  protected @Bind(R.id.creator_tools_fab) FloatingActionButton creatorToolsFab;
   protected @Bind(R.id.divider_view) View dividerView;
   protected @Bind(R.id.recycler_view) RecyclerView recyclerView;
   protected @Bind(R.id.user_name_text_view) TextView userNameTextView;
@@ -96,6 +98,11 @@ public final class ProfileActivity extends BaseActivity<ProfileViewModel.ViewMod
       .compose(observeForUI())
       .subscribe(ViewUtils.setGone(this.createdTextView));
 
+    this.viewModel.outputs.creatorToolsFabIsGone()
+      .compose(bindToLifecycle())
+      .compose(observeForUI())
+      .subscribe(ViewUtils.setGone(this.creatorToolsFab));
+
     this.viewModel.outputs.dividerViewHidden()
       .compose(bindToLifecycle())
       .compose(observeForUI())
@@ -137,6 +144,12 @@ public final class ProfileActivity extends BaseActivity<ProfileViewModel.ViewMod
   @OnClick(R.id.messages_button)
   public void messagesButtonClicked() {
     this.viewModel.inputs.messagesButtonClicked();
+  }
+
+  @OnClick({R.id.creator_tools_fab, R.id.created_text_view})
+  protected void creatorToolsFabClick() {
+    Intent intent = new Intent(this, CreatorDashboardActivity.class);
+    startActivityWithTransition(intent, R.anim.slide_in_right, R.anim.fade_out_slide_out_left);
   }
 
   private void loadProjects(final @NonNull List<Project> projects) {

@@ -15,6 +15,13 @@
     android:layout_height="match_parent"
     android:background="@color/ksr_grey_100"/>
 
+  <include layout="@layout/creator_tools_fab"
+    android:layout_above="@+id/project_action_buttons"
+    android:layout_margin="16dp"
+    android:layout_alignParentEnd="true"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content" />
+
   <RelativeLayout
     android:id="@+id/project_action_buttons"
     android:focusable="true"

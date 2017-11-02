@@ -64,6 +64,9 @@ public interface ProfileViewModel {
     /** Emits when the created projects text view should be hidden. */
     Observable<Boolean> createdTextViewHidden();
 
+    /** Emits when the creator tools fab should be hidden. */
+    Observable<Boolean> creatorToolsFabIsGone();
+
     /** Emits when the divider view should be hidden. */
     Observable<Boolean> dividerViewHidden();
 
@@ -129,6 +132,7 @@ public interface ProfileViewModel {
       this.createdCountTextViewHidden = loggedInUser
         .map(u -> IntegerUtils.isZero(u.createdProjectsCount()));
       this.createdTextViewHidden = this.createdCountTextViewHidden;
+      this.creatorToolsFabIsGone = this.createdTextViewHidden;
 
       this.createdCountTextViewText = loggedInUser
         .map(User::createdProjectsCount)
@@ -163,6 +167,7 @@ public interface ProfileViewModel {
     private final Observable<Boolean> createdCountTextViewHidden;
     private final Observable<String> createdCountTextViewText;
     private final Observable<Boolean> createdTextViewHidden;
+    private final Observable<Boolean> creatorToolsFabIsGone;
     private final Observable<Boolean> dividerViewHidden;
     private final Observable<List<Project>> projectList;
     private final Observable<Void> resumeDiscoveryActivity;
@@ -212,6 +217,9 @@ public interface ProfileViewModel {
     }
     @Override public @NonNull Observable<Boolean> createdTextViewHidden() {
       return this.createdTextViewHidden;
+    }
+    @Override public @NonNull Observable<Boolean> creatorToolsFabIsGone() {
+      return this.creatorToolsFabIsGone;
     }
     @Override public @NonNull Observable<Boolean> dividerViewHidden() {
       return this.dividerViewHidden;

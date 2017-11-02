@@ -54,6 +54,7 @@
           android:paddingEnd="@dimen/grid_1"
           android:orientation="horizontal">
 
+          <!--for accessibility purposes, should this have a min height of 48dp?-->
           <TextView
             style="@style/CalloutPrimary"
             android:id="@+id/created_text_view"
@@ -118,5 +119,8 @@
     android:scrollbars="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:ignore="RtlSymmetry" />
+
+  <include
+    layout="@layout/creator_tools_fab"/>
 
 </android.support.design.widget.CoordinatorLayout>

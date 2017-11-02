@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.FloatingActionButton
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/creator_tools_fab"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
   android:layout_alignParentBottom="true"
   android:layout_alignParentEnd="true"
+  android:layout_gravity="bottom|end"
+  android:layout_margin="16dp"
   android:src="@drawable/ic_icon__graph_bar"
   app:backgroundTint="@color/royal_blue"
-  android:layout_margin="16dp"
   app:fabSize="normal"
   tools:showIn="@layout/discovery_layout" />
