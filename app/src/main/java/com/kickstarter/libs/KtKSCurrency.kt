@@ -75,6 +75,7 @@ class KtKSCurrency(val currentConfig: CurrentConfigType) {
       return project.currencySymbol()
     }
 
+    // todo: use nbsp
     if (project.country() == "US" && config.countryCode() == "US") {
       // US people looking at US projects just get the currency symbol
       return project.currencySymbol()

@@ -13,12 +13,12 @@ import junit.framework.TestCase;
 import java.math.RoundingMode;
 
 public class KSCurrencyTest extends TestCase {
-  public void testFormatCurrency_withUserInUS_USDPreference() {
+  public void testFormatCurrency_withUserInUS() {
     final KtKSCurrency currency = createKSCurrency("US");
     assertEquals("$1,000", currency.format(1000.0f, ProjectFactory.project()));
     assertEquals("CA$ 1,000", currency.format(1000.0f, ProjectFactory.caProject()));
     assertEquals("€1,000", currency.format(1000.0f, ProjectFactory.deProject()));
-    assertEquals("DKK 1,000", currency.format(1000.0f, ProjectFactory.dkProject()));
+    assertEquals("DKK 1,000", currency.format(1000.0f, ProjectFactory.dkProject()));
     assertEquals("£1,000", currency.format(1000.0f, ProjectFactory.gbProject()));
     assertEquals("¥1,000", currency.format(1000.0f, ProjectFactory.jpProject()));
 

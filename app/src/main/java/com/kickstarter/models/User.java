@@ -13,6 +13,7 @@ import auto.parcel.AutoParcel;
 public abstract class User implements Parcelable {
   public abstract Avatar avatar();
   public abstract @Nullable Integer backedProjectsCount();
+  public abstract @Nullable String chosenCurrency();  // todo: make this a type
   public abstract @Nullable Integer createdProjectsCount();
   public abstract @Nullable Boolean gamesNewsletter();
   public abstract @Nullable Boolean happeningNewsletter();
@@ -39,6 +40,7 @@ public abstract class User implements Parcelable {
   public abstract static class Builder {
     public abstract Builder avatar(Avatar __);
     public abstract Builder backedProjectsCount(Integer __);
+    public abstract Builder chosenCurrency(String __);
     public abstract Builder createdProjectsCount(Integer __);
     public abstract Builder gamesNewsletter(Boolean __);
     public abstract Builder happeningNewsletter(Boolean __);
