@@ -17,7 +17,7 @@ public final class ProjectUtilsTest extends KSRobolectricTestCase {
   public void testIsUsUserViewingNonUsProject() {
     assertTrue(ProjectUtils.isUSUserViewingNonUSProject(
       UserFactory.user().location().country(),
-      ProjectFactory.ukProject().country())
+      ProjectFactory.gbProject().country())
     );
     assertFalse(ProjectUtils.isUSUserViewingNonUSProject(
       UserFactory.user().location().country(),

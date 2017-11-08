@@ -90,9 +90,9 @@ public final class NumberUtilsTest extends TestCase {
   }
 
   public void testFormatNumber_floatWithCurrency() {
-    assertEquals("$100", NumberUtils.format(100.0f, NumberOptions.builder().currencySymbol("$").build()));
-    assertEquals("€100", NumberUtils.format(100.0f, NumberOptions.builder().currencySymbol("€").build()));
-    assertEquals("$100 CAD", NumberUtils.format(100.0f, NumberOptions.builder().currencySymbol("$").currencyCode("CAD").build()));
+    assertEquals("$1,000", NumberUtils.format(1000.0f, NumberOptions.builder().currencySymbol("$").build()));
+    assertEquals("€1,000", NumberUtils.format(1000.0f, NumberOptions.builder().currencySymbol("€").build()));
+    assertEquals("$1,000 CAD", NumberUtils.format(1000.0f, NumberOptions.builder().currencySymbol("$").currencyCode("CAD").build()));
   }
 
   public void testFormatNumber_floatWithCurrencyAndGermanyLocale() {
@@ -101,4 +101,3 @@ public final class NumberUtilsTest extends TestCase {
     assertEquals("100,12", NumberUtils.format(100.12f, NumberOptions.builder().precision(2).build(), Locale.GERMANY));
   }
 }
-

@@ -155,6 +155,14 @@ public final class ProjectFactory {
       .build();
   }
 
+  public static @NonNull Project almostCompletedProject() {
+    return project()
+      .toBuilder()
+      .name("almostCompleteProject")
+      .deadline(new DateTime().plusDays(1))
+      .build();
+  }
+
   public static @NonNull Project doubledGoalProject() {
     return project()
       .toBuilder()
@@ -183,22 +191,44 @@ public final class ProjectFactory {
       .build();
   }
 
-  public static @NonNull Project ukProject() {
+  public static @NonNull Project deProject() {
     return project()
       .toBuilder()
-      .name("ukProject")
-      .country("UK")
+      .name("deProject")
+      .country("DE")
+      .currencySymbol("€")
+      .currency("EUR")
+      .build();
+  }
+
+  public static @NonNull Project dkProject() {
+    return project()
+      .toBuilder()
+      .name("dkProject")
+      .country("DK")
+      .currencySymbol("kr")
+      .currency("DKK")
+      .build();
+  }
+
+  public static @NonNull Project gbProject() {
+    return project()
+      .toBuilder()
+      .name("gbProject")
+      .country("GB")
       .currencySymbol("£")
       .currency("GBP")
       .staticUsdRate(1.5f)
       .build();
   }
 
-  public static @NonNull Project almostCompletedProject() {
+  public static @NonNull Project jpProject() {
     return project()
       .toBuilder()
-      .name("almostCompleteProject")
-      .deadline(new DateTime().plusDays(1))
+      .name("jpProject")
+      .country("JP")
+      .currencySymbol("¥")
+      .currency("JPY")
       .build();
   }
 
