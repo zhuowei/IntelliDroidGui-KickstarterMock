@@ -84,10 +84,6 @@ public final class NumberUtils {
       }
     }
 
-    if (options.currencyCode() != null) {
-      suffix = String.format("%s %s", suffix, options.currencyCode());
-    }
-
     numberFormat.setMinimumFractionDigits(precision);
     numberFormat.setMaximumFractionDigits(precision);
 
