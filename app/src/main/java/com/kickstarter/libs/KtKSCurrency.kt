@@ -25,7 +25,7 @@ class KtKSCurrency(val currentConfig: CurrentConfigType) {
 
     val numberOptions: NumberOptions = NumberOptions.builder()
       .currencyCode(if (showCurrencyCode) currencyOptions.currencyCode() else "")
-      .currencySymbol(currencySymbol(project))
+      .currencySymbol(currencyOptions.currencySymbol())
       .roundingMode(roundingMode)
       .build()
 
@@ -48,6 +48,7 @@ class KtKSCurrency(val currentConfig: CurrentConfigType) {
     } else if (currencyRate != null) {
       return KSCurrency.CurrencyOptions.builder()
         .country(project.country())
+        .currencySymbol(currencySymbol(project))
         .currencyCode(project.currentCurrency())
         .value(value * currencyRate)
         .build()
@@ -55,7 +56,7 @@ class KtKSCurrency(val currentConfig: CurrentConfigType) {
       return KSCurrency.CurrencyOptions.builder()
         .country(project.country())
         .currencyCode(project.currency())
-        .currencySymbol(project.currencySymbol())
+        .currencySymbol(currencySymbol(project))
         .value(value)
         .build()
     }

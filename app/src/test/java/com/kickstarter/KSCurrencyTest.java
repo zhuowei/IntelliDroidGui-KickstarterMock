@@ -40,8 +40,8 @@ public class KSCurrencyTest extends TestCase {
       .currentCurrencyRate(1.3f)
       .build();
 
-    assertEquals("US$ 1,000", currency.format(1000.0f, usProject));
-    assertEquals("CA$ 1,000", currency.format(1000.0f, caProject));
+    assertEquals("CA$ 1,300", currency.format(1000.0f, usProject));
+    assertEquals("CA$ 1,300", currency.format(1000.0f, caProject));
   }
 
   public void testFormatCurrency_withUserInCA() {
