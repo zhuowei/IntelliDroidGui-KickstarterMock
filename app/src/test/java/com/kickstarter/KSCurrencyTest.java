@@ -51,36 +51,6 @@ public class KSCurrencyTest extends TestCase {
     assertEquals("£100", currency.format(100.0f, ProjectFactory.gbProject()));
   }
 
-  public void testFormatCurrency_withUserInES() {
-    final KtKSCurrency currency = createKSCurrency("ES");
-    assertEquals("1.000 $", currency.format(1000.0f, ProjectFactory.project()));
-    assertEquals("1.000 CA$", currency.format(1000.0f, ProjectFactory.caProject()));
-    assertEquals("1.000 £", currency.format(1000.0f, ProjectFactory.gbProject()));
-    assertEquals("1.000 €", currency.format(1000.0f, ProjectFactory.deProject()));
-    assertEquals("1.000 DKK", currency.format(1000.0f, ProjectFactory.dkProject()));
-    assertEquals("1.000 ¥", currency.format(1000.0f, ProjectFactory.jpProject()));
-  }
-
-  public void testFormatCurrency_withUserInFR() {
-    final KtKSCurrency currency = createKSCurrency("FR");
-    assertEquals("1 000 $", currency.format(1000.0f, ProjectFactory.project()));
-    assertEquals("1 000 CA$", currency.format(1000.0f, ProjectFactory.caProject()));
-    assertEquals("1 000 £", currency.format(1000.0f, ProjectFactory.gbProject()));
-    assertEquals("1 000 €", currency.format(1000.0f, ProjectFactory.deProject()));
-    assertEquals("1 000 DKK", currency.format(1000.0f, ProjectFactory.dkProject()));
-    assertEquals("1 000 ¥", currency.format(1000.0f, ProjectFactory.jpProject()));
-  }
-
-  public void testFormatCurrency_withUserInJP() {
-    final KtKSCurrency currency = createKSCurrency("JP");
-    assertEquals("US$ 1000", currency.format(1000.0f, ProjectFactory.project()));
-    assertEquals("CA$ 1000", currency.format(1000.0f, ProjectFactory.caProject()));
-    assertEquals("£ 1000", currency.format(1000.0f, ProjectFactory.gbProject()));
-    assertEquals("€ 1000", currency.format(1000.0f, ProjectFactory.deProject()));
-    assertEquals("DKK 1000", currency.format(1000.0f, ProjectFactory.dkProject()));
-    assertEquals("¥ 1000", currency.format(1000.0f, ProjectFactory.jpProject()));
-  }
-
   public void testFormatCurrency_withUserInUK() {
     final KtKSCurrency currency = createKSCurrency("UK");
     assertEquals("US$ 100", currency.format(100.0f, ProjectFactory.project()));
@@ -97,7 +67,7 @@ public class KSCurrencyTest extends TestCase {
 
   public void testFormatCurrency_withCurrencyCodeExcluded() {
     final KtKSCurrency currency = createKSCurrency("CA");
-    assertEquals("$100", currency.format(100.0f, ProjectFactory.project(), true));
+    assertEquals("US$ 100", currency.format(100.0f, ProjectFactory.project(), true));
   }
 
   public void testFormatCurrency_withUserInUSAndUSDPreferred() {

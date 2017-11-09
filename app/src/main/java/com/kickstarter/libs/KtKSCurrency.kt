@@ -11,7 +11,7 @@ class KtKSCurrency(val currentConfig: CurrentConfigType) {
    *
    * @param initialValue        Value to display, local to the project's currency.
    * @param project             The project to use to look up currency information.
-   * @param omitCurrencyCode If true, hide the currency code, even if that makes the returned value ambiguous.
+   * @param omitCurrencyCode    If true, hide the currency code, even if that makes the returned value ambiguous.
    *                            This is used when space is constrained and the currency code can be determined elsewhere.
    * @param preferUSD           Attempt to convert a project from it's local currency to USD, if the user is located in
    *                            the US.
@@ -77,17 +77,26 @@ class KtKSCurrency(val currentConfig: CurrentConfigType) {
     }
 
     // todo: use nbsp
-    if (project.country() == "US" && config.countryCode() == "US") {
+    if (project.currentCurrency() == null && project.country() == "US" && config.countryCode() == "US") {
       // US people looking at US projects just get the currency symbol
       return project.currencySymbol()
+    } else if (project.currentCurrency() != null) {
+      config.launchedCountries().map {
+        if (it.currencyCode() == project.currentCurrency()) {
+          // User's selected currency preference takes precedence
+          return String.format(" %s%s ", it.name(), it.currencySymbol())
+        }
+      }
+      // Everything else uses the country code prefix.
+      return String.format(" %s%s ", project.country(), project.currencySymbol())
     } else if (project.country() == "SG") {
-      // Singapore projects get a special currency prefix "\(String.nbsp)S\(country.currencySymbol)\(String.nbsp)"
+      // Singapore projects get a special currency prefix
       return String.format(" S%s ", project.currencySymbol())
     } else if (project.currencySymbol() == "kr" || project.currencySymbol() == "Fr") {
-      // Kroner projects use the currency code prefix "\(String.nbsp)\(country.currencyCode)\(String.nbsp)"
+      // Kroner projects use the currency code prefix
       return String.format(" %s ", project.currency())
     } else {
-      // Everything else uses the country code prefix. "\(String.nbsp)\(country.countryCode)\(country.currencySymbol)\(String.nbsp)"
+      // Everything else uses the country code prefix.
       return String.format(" %s%s ", project.country(), project.currencySymbol())
     }
   }
