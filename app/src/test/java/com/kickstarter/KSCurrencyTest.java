@@ -46,8 +46,8 @@ public class KSCurrencyTest extends TestCase {
 
   public void testFormatCurrency_withUserInCA() {
     final KtKSCurrency currency = createKSCurrency("CA");
-    assertEquals("$100 USD", currency.format(100.0f, ProjectFactory.project()));
-    assertEquals("$100 CAD", currency.format(100.0f, ProjectFactory.caProject()));
+    assertEquals("US$ 100", currency.format(100.0f, ProjectFactory.project()));
+    assertEquals("CA$ 100", currency.format(100.0f, ProjectFactory.caProject()));
     assertEquals("£100", currency.format(100.0f, ProjectFactory.gbProject()));
   }
 
@@ -72,7 +72,7 @@ public class KSCurrencyTest extends TestCase {
   }
 
   public void testFormatCurrency_withUserInJP() {
-    final KtKSCurrency currency = createKSCurrency("FR");
+    final KtKSCurrency currency = createKSCurrency("JP");
     assertEquals("US$ 1000", currency.format(1000.0f, ProjectFactory.project()));
     assertEquals("CA$ 1000", currency.format(1000.0f, ProjectFactory.caProject()));
     assertEquals("£ 1000", currency.format(1000.0f, ProjectFactory.gbProject()));
@@ -83,15 +83,15 @@ public class KSCurrencyTest extends TestCase {
 
   public void testFormatCurrency_withUserInUK() {
     final KtKSCurrency currency = createKSCurrency("UK");
-    assertEquals("$100 USD", currency.format(100.0f, ProjectFactory.project()));
-    assertEquals("$100 CAD", currency.format(100.0f, ProjectFactory.caProject()));
+    assertEquals("US$ 100", currency.format(100.0f, ProjectFactory.project()));
+    assertEquals("CA$ 100", currency.format(100.0f, ProjectFactory.caProject()));
     assertEquals("£100", currency.format(100.0f, ProjectFactory.gbProject()));
   }
 
   public void testFormatCurrency_withUserInUnlaunchedCountry() {
     final KtKSCurrency currency = createKSCurrency("XX");
-    assertEquals("$100 USD", currency.format(100.0f, ProjectFactory.project()));
-    assertEquals("$100 CAD", currency.format(100.0f, ProjectFactory.caProject()));
+    assertEquals("US$ 100", currency.format(100.0f, ProjectFactory.project()));
+    assertEquals("CA$ 100", currency.format(100.0f, ProjectFactory.caProject()));
     assertEquals("£100", currency.format(100.0f, ProjectFactory.gbProject()));
   }
 
