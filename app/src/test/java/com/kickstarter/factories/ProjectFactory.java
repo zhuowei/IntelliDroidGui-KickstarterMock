@@ -240,4 +240,20 @@ public final class ProjectFactory {
       .state(Project.STATE_SUCCESSFUL)
       .build();
   }
+
+  public static Project featured() {
+    return project()
+      .toBuilder()
+      .name("featuredProject")
+      .featuredAt(new DateTime())
+      .build();
+  }
+
+  public static Project saved() {
+    return project()
+      .toBuilder()
+      .name("savedProject")
+      .isStarred(true)
+      .build();
+  }
 }

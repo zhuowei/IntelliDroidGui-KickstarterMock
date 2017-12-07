@@ -357,8 +357,9 @@ public final class Koala {
     this.client.track("Checkout Finished Discover More");
   }
 
-  public void trackCheckoutFinishJumpToProject() {
-    this.client.track("Checkout Finished Discover Open Project");
+  public void trackCheckoutFinishJumpToProject(final @NonNull Project project) {
+    final Map<String, Object> props = KoalaUtils.projectProperties(project);
+    this.client.track("Checkout Finished Discover Open Project", props);
   }
 
   // SHARE
@@ -483,7 +484,10 @@ public final class Koala {
       }
     };
 
-    this.client.track("Notification Opened", properties);
+    // deprecated
+    this.client.track(KoalaEvent.NOTIFICATION_OPENED_LEGACY, properties);
+
+    this.client.track(KoalaEvent.OPENED_NOTIFICATION, properties);
   }
 
   // WEBVIEWS
@@ -492,5 +496,12 @@ public final class Koala {
     props.put("context", context.getTrackingString());
 
     this.client.track(KoalaEvent.OPENED_EXTERNAL_LINK, props);
+  }
+
+  // DEEP LINK
+  public void trackContinueUserActivityAndOpenedDeepLink() {
+    this.client.track(KoalaEvent.CONTINUE_USER_ACTIVITY);
+
+    this.client.track(KoalaEvent.OPENED_DEEP_LINK);
   }
 }

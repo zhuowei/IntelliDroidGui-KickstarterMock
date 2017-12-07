@@ -98,9 +98,6 @@ public interface RewardViewModel {
     /** Returns `true` if selected header should be hidden, `false` otherwise. */
     Observable<Boolean> selectedHeaderIsGone();
 
-    /** Returns `true` if selected overlay should be hidden, `false` otherwise. */
-    Observable<Boolean> selectedOverlayIsGone();
-
     /** Returns `true` if the shipping section should be hidden, `false` otherwise. */
     Observable<Boolean> shippingSummarySectionIsGone();
 
@@ -235,10 +232,6 @@ public interface RewardViewModel {
         .map(BooleanUtils::negate)
         .distinctUntilChanged();
 
-      this.selectedOverlayIsGone = rewardIsSelected
-        .map(BooleanUtils::negate)
-        .distinctUntilChanged();
-
       this.shippingSummaryTextViewText = reward
         .filter(RewardUtils::isShippable)
         .map(Reward::shippingSummary);
@@ -318,7 +311,6 @@ public interface RewardViewModel {
     private final Observable<Boolean> titleTextViewIsGone;
     private final Observable<String> titleTextViewText;
     private final Observable<Boolean> selectedHeaderIsGone;
-    private final Observable<Boolean> selectedOverlayIsGone;
     private final Observable<Boolean> shippingSummarySectionIsGone;
     private final Observable<String> shippingSummaryTextViewText;
     private final Observable<Project> startBackingActivity;
@@ -388,9 +380,6 @@ public interface RewardViewModel {
     }
     @Override public @NonNull Observable<Boolean> selectedHeaderIsGone() {
       return this.selectedHeaderIsGone;
-    }
-    @Override public @NonNull Observable<Boolean> selectedOverlayIsGone() {
-      return this.selectedOverlayIsGone;
     }
     @Override public @NonNull Observable<Boolean> shippingSummarySectionIsGone() {
       return this.shippingSummarySectionIsGone;
