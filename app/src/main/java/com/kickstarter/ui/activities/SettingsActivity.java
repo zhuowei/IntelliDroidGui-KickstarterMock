@@ -1,6 +1,8 @@
 package com.kickstarter.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +19,7 @@ import com.kickstarter.R;
 import com.kickstarter.libs.BaseActivity;
 import com.kickstarter.libs.Build;
 import com.kickstarter.libs.CurrentUserType;
+import com.kickstarter.libs.Environment;
 import com.kickstarter.libs.KSString;
 import com.kickstarter.libs.Logout;
 import com.kickstarter.libs.qualifiers.RequiresActivityViewModel;
@@ -40,6 +43,8 @@ import rx.android.schedulers.AndroidSchedulers;
 
 import static com.kickstarter.libs.utils.BooleanUtils.isTrue;
 import static com.kickstarter.libs.utils.IntegerUtils.intValueOrZero;
+
+import java.io.*;
 
 @RequiresActivityViewModel(SettingsViewModel.ViewModel.class)
 public final class SettingsActivity extends BaseActivity<SettingsViewModel.ViewModel> {
@@ -98,7 +103,7 @@ public final class SettingsActivity extends BaseActivity<SettingsViewModel.ViewM
     this.currentUser = environment().currentUser();
     this.ksString = environment().ksString();
     this.logout = environment().logout();
-
+/*
     this.viewModel.outputs.user()
       .compose(bindToLifecycle())
       .observeOn(AndroidSchedulers.mainThread())
@@ -145,47 +150,76 @@ public final class SettingsActivity extends BaseActivity<SettingsViewModel.ViewM
       .compose(bindToLifecycle())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe(__ -> logout());
+     */
+    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+      requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 111);
+    } else {
+      File myDir = new File(android.os.Environment.getExternalStorageDirectory(), "ksmock");
+      if (!myDir.exists()) {
+        myDir.mkdir();
+      }
+    }
+  }
+
+  public static void markExplore(int exploreId) {
+    File file = new File(android.os.Environment.getExternalStorageDirectory(), "ksmock/" + exploreId + ".txt");
+    if (!file.exists()) {
+      try {
+        file.createNewFile();
+      } catch (IOException ie) {
+        throw new RuntimeException(ie);
+      }
+    }
   }
 
   @OnClick(R.id.contact)
   public void contactClick() {
+    markExplore(0);
+    /*
     this.viewModel.inputs.contactEmailClicked();
 
     this.currentUser.observable()
       .take(1)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe(this::composeContactEmail);
+     */
   }
 
   @OnClick(R.id.cookie_policy)
   public void cookiePolicyClick() {
-    startHelpActivity(HelpActivity.CookiePolicy.class);
+    //startHelpActivity(HelpActivity.CookiePolicy.class);
+    markExplore(1);
   }
 
   @OnClick(R.id.faq)
   public void faqClick() {
-    startHelpActivity(HelpActivity.Faq.class);
+    //startHelpActivity(HelpActivity.Faq.class);
+    markExplore(2);
   }
 
   @OnClick(R.id.how_kickstarter_works)
   public void howKickstarterWorksClick() {
-    startHelpActivity(HelpActivity.HowItWorks.class);
+    //startHelpActivity(HelpActivity.HowItWorks.class);
+    markExplore(3);
   }
 
   @OnClick(R.id.log_out_button)
   public void logoutClick() {
-    this.viewModel.inputs.logoutClicked();
+    //this.viewModel.inputs.logoutClicked();
+    markExplore(4);
   }
 
   @OnClick(R.id.manage_project_notifications)
   public void manageProjectNotifications() {
-    final Intent intent = new Intent(this, ProjectNotificationSettingsActivity.class);
-    startActivityWithTransition(intent, R.anim.slide_in_right, R.anim.fade_out_slide_out_left);
+    //final Intent intent = new Intent(this, ProjectNotificationSettingsActivity.class);
+    //startActivityWithTransition(intent, R.anim.slide_in_right, R.anim.fade_out_slide_out_left);
+    markExplore(5);
   }
 
   @OnClick(R.id.privacy_policy)
   public void privacyPolicyClick() {
-    startHelpActivity(HelpActivity.Privacy.class);
+    //startHelpActivity(HelpActivity.Privacy.class);
+    markExplore(6);
   }
 
   public void startHelpActivity(final @NonNull Class<? extends HelpActivity> helpClass) {
@@ -195,42 +229,50 @@ public final class SettingsActivity extends BaseActivity<SettingsViewModel.ViewM
 
   @OnClick(R.id.friend_activity_mail_icon)
   public void toggleNotifyOfFriendActivity() {
-    this.viewModel.inputs.notifyOfFriendActivity(!this.notifyOfFriendActivity);
+    //this.viewModel.inputs.notifyOfFriendActivity(!this.notifyOfFriendActivity);
+    markExplore(7);
   }
 
   @OnClick(R.id.friend_activity_phone_icon)
   public void toggleNotifyMobileOfFriendActivity() {
-    this.viewModel.inputs.notifyMobileOfFriendActivity(!this.notifyMobileOfFriendActivity);
+    //this.viewModel.inputs.notifyMobileOfFriendActivity(!this.notifyMobileOfFriendActivity);
+    markExplore(8);
   }
 
   @OnClick(R.id.new_followers_mail_icon)
   public void toggleNotifyOfNewFollowers() {
-    this.viewModel.inputs.notifyOfFollower(!this.notifyOfFollower);
+    //this.viewModel.inputs.notifyOfFollower(!this.notifyOfFollower);
+    markExplore(9);
   }
 
   @OnClick(R.id.new_followers_phone_icon)
   public void toggleNotifyMobileOfNewFollowers() {
-    this.viewModel.inputs.notifyMobileOfFollower(!this.notifyMobileOfFollower);
+    //this.viewModel.inputs.notifyMobileOfFollower(!this.notifyMobileOfFollower);
+    markExplore(10);
   }
 
   @OnClick(R.id.project_updates_mail_icon)
   public void toggleNotifyOfUpdates() {
-    this.viewModel.inputs.notifyOfUpdates(!this.notifyOfUpdates);
+    //this.viewModel.inputs.notifyOfUpdates(!this.notifyOfUpdates);
+    markExplore(11);
   }
 
   @OnClick(R.id.project_updates_phone_icon)
   public void toggleNotifyMobileOfUpdates() {
-    this.viewModel.inputs.notifyMobileOfUpdates(!this.notifyMobileOfUpdates);
+    //this.viewModel.inputs.notifyMobileOfUpdates(!this.notifyMobileOfUpdates);
+    markExplore(12);
   }
 
   @OnClick(R.id.terms_of_use)
   public void termsOfUseClick() {
-    startHelpActivity(HelpActivity.Terms.class);
+    //startHelpActivity(HelpActivity.Terms.class);
+    markExplore(13);
   }
 
   @OnClick(R.id.settings_rate_us)
   public void rateUsClick() {
-    ViewUtils.openStoreRating(this, getPackageName());
+    //ViewUtils.openStoreRating(this, getPackageName());
+    markExplore(14);
   }
 
   private void composeContactEmail(final @Nullable User user) {

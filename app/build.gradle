@@ -82,7 +82,7 @@ android {
             // It should not be used for release builds. See:
             // https://developer.android.com/tools/building/multidex.html#dev-build
             dimension "API"
-            minSdkVersion 21
+            minSdkVersion 23
         }
         internal {
             dimension "AUDIENCE"
